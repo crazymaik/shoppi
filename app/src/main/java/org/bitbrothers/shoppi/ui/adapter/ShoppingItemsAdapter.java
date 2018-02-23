@@ -53,5 +53,6 @@ public class ShoppingItemsAdapter extends BaseAdapter {
 
     public void setShoppingItems(List<ShoppingItem> shoppingItems) {
         this.shoppingItems = shoppingItems;
+        notifyDataSetChanged();
     }
 }
