@@ -12,12 +12,12 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 import java.util.Collections;
 import java.util.List;
 
-public class ShoppingItemAdapter extends BaseAdapter {
+public class ShoppingItemsAdapter extends BaseAdapter {
 
     private final LayoutInflater layoutInflater;
     private List<ShoppingItem> shoppingItems;
 
-    public ShoppingItemAdapter(LayoutInflater layoutInflater) {
+    public ShoppingItemsAdapter(LayoutInflater layoutInflater) {
         this.layoutInflater = layoutInflater;
         this.shoppingItems = Collections.emptyList();
     }
