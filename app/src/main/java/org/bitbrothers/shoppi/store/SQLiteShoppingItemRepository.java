@@ -44,8 +44,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     @Override
     public ShoppingItem get(long id) {
-        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase()) {
-            Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, "id = ?", new String[]{"" + id}, null, null, null);
+        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, "id = ?", new String[]{"" + id}, null, null, null)) {
 
             if (!cursor.moveToNext()) {
                 return null;
@@ -57,9 +57,9 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     @Override
     public List<ShoppingItem> getAll() {
-        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase()) {
-            List<ShoppingItem> items = new ArrayList<>();
-            Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, null);
+        List<ShoppingItem> items = new ArrayList<>();
+        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, null)) {
 
             if (!cursor.isBeforeFirst()) {
                 return null;
@@ -68,8 +68,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             while (cursor.moveToNext()) {
                 items.add(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("name"))));
             }
-
-            return items;
         }
+        return items;
     }
 }
