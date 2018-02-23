@@ -3,7 +3,9 @@ package org.bitbrothers.shoppi.ui.activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ListView;
 
 import org.bitbrothers.shoppi.R;
@@ -11,6 +13,7 @@ import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 import org.bitbrothers.shoppi.ui.adapter.ShoppingItemsAdapter;
+import org.bitbrothers.shoppi.ui.fragment.AddShoppingItemDialogFragment;
 
 import java.util.List;
 
@@ -39,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(shoppingItemsAdapter);
+
+        final FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddShoppingItemDialogFragment.newInstance().show(getSupportFragmentManager(), null);
+            }
+        });
 
         ShoppingItemRepository repository = ShoppiApplication.from(this).getShoppingItemRepository();
 
