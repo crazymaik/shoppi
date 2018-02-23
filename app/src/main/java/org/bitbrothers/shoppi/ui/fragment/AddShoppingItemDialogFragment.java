@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
@@ -28,19 +27,6 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
     private AddShoppingItemAsyncTask addShoppingItemAsyncTask;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        ShoppingItemRepository shoppingItemRepository = ShoppiApplication.from(getContext()).getShoppingItemRepository();
-        addShoppingItemAsyncTask = new AddShoppingItemAsyncTask(shoppingItemRepository, new AddShoppingItemAsyncTask.Callback() {
-            @Override
-            public void onSucceeded(ShoppingItem shoppingItem) {
-                AddShoppingItemDialogFragment.this.dismiss();
-            }
-        });
-    }
-
-    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -49,11 +35,7 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
         builder.setPositiveButton(R.string.add_shopping_item_positive_button, null);
         builder.setNegativeButton(R.string.add_shopping_item_negative_button, null);
 
-        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_add_shopping_item, null);
-
-        final EditText editText = view.findViewById(android.R.id.edit);
-
-        builder.setView(view);
+        builder.setView(getActivity().getLayoutInflater().inflate(R.layout.fragment_add_shopping_item, null));
 
         AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
@@ -70,7 +52,7 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
 
     @Override
     public void onDestroy() {
-        addShoppingItemAsyncTask.destroy();
+        cancelAddShoppingItem();
         super.onDestroy();
     }
 
@@ -101,7 +83,7 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
             public void onClick(View v) {
                 editText.setEnabled(false);
                 positiveButton.setEnabled(false);
-                addShoppingItemAsyncTask.execute(new ShoppingItem(editText.getText().toString().trim()));
+                addShoppingItem(new ShoppingItem(editText.getText().toString().trim()));
             }
         });
 
@@ -111,6 +93,25 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void addShoppingItem(ShoppingItem shoppingItem) {
+        ShoppingItemRepository shoppingItemRepository = ShoppiApplication.from(getContext()).getShoppingItemRepository();
+        addShoppingItemAsyncTask = new AddShoppingItemAsyncTask(shoppingItemRepository, new AddShoppingItemAsyncTask.Callback() {
+            @Override
+            public void onSucceeded(ShoppingItem shoppingItem) {
+                AddShoppingItemDialogFragment.this.dismiss();
+                addShoppingItemAsyncTask = null;
+            }
+        });
+        addShoppingItemAsyncTask.execute(shoppingItem);
+    }
+
+    private void cancelAddShoppingItem() {
+        if (addShoppingItemAsyncTask != null) {
+            addShoppingItemAsyncTask.destroy();
+            addShoppingItemAsyncTask = null;
+        }
     }
 
     private static class AddShoppingItemAsyncTask extends AsyncTask<ShoppingItem, Void, ShoppingItem> {

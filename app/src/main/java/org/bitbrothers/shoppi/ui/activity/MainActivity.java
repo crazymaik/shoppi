@@ -19,13 +19,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ShoppingItemRepository repository;
     private ShoppingItemsAdapter shoppingItemsAdapter;
-    private GetAllShoppingItems getAllShoppingItems;
+    private GetAllShoppingItems getAllShoppingItemsTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
@@ -37,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
                 .detectAll()
                 .penaltyLog()
                 .build());
+
+        repository = ShoppiApplication.from(this).getShoppingItemRepository();
+
+        setContentView(R.layout.activity_main);
 
         shoppingItemsAdapter = new ShoppingItemsAdapter(getLayoutInflater());
 
@@ -50,27 +54,37 @@ public class MainActivity extends AppCompatActivity {
                 AddShoppingItemDialogFragment.newInstance().show(getSupportFragmentManager(), null);
             }
         });
-
-        ShoppingItemRepository repository = ShoppiApplication.from(this).getShoppingItemRepository();
-
-        getAllShoppingItems = new GetAllShoppingItems(repository, new GetAllShoppingItems.Callback() {
-            @Override
-            public void onResult(List<ShoppingItem> shoppingItems) {
-                shoppingItemsAdapter.setShoppingItems(shoppingItems);
-            }
-        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getAllShoppingItems.execute();
+        getAllShoppingItems();
     }
 
     @Override
     protected void onDestroy() {
-        getAllShoppingItems.destroy();
+        cancelGetAllShoppingItems();
         super.onDestroy();
+    }
+
+    private void getAllShoppingItems() {
+        cancelGetAllShoppingItems();
+        getAllShoppingItemsTask = new GetAllShoppingItems(repository, new GetAllShoppingItems.Callback() {
+            @Override
+            public void onResult(List<ShoppingItem> shoppingItems) {
+                shoppingItemsAdapter.setShoppingItems(shoppingItems);
+                getAllShoppingItemsTask = null;
+            }
+        });
+        getAllShoppingItemsTask.execute();
+    }
+
+    private void cancelGetAllShoppingItems() {
+        if (getAllShoppingItemsTask != null) {
+            getAllShoppingItemsTask.destroy();
+            getAllShoppingItemsTask = null;
+        }
     }
 
     private static class GetAllShoppingItems extends AsyncTask<Void, Void, List<ShoppingItem>> {
