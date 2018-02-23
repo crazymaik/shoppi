@@ -3,7 +3,6 @@ package org.bitbrothers.shoppi.store;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import org.bitbrothers.shoppi.model.ShoppingItem;
 
