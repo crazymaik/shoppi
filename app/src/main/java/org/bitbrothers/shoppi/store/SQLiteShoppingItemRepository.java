@@ -19,16 +19,17 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     @Override
     public ShoppingItem create(ShoppingItem shoppingItem) {
-        try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-            long id;
+        long id;
 
+        try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put("name", shoppingItem.getName());
 
             id = db.insert("shopping_items", null, values);
 
-            return get(id);
         }
+
+        return get(id);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     public List<ShoppingItem> getAll() {
         List<ShoppingItem> items = new ArrayList<>();
         try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, null)) {
+             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, "name collate nocase asc")) {
 
             if (!cursor.isBeforeFirst()) {
                 return null;
