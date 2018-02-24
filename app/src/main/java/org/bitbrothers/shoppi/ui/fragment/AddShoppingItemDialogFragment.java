@@ -1,9 +1,8 @@
 package org.bitbrothers.shoppi.ui.fragment;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
@@ -14,56 +13,47 @@ import android.widget.EditText;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
-import org.bitbrothers.shoppi.model.ShoppingItem;
-import org.bitbrothers.shoppi.store.ShoppingItemRepository;
+import org.bitbrothers.shoppi.presenter.AddShoppingItemPresenter;
 
-public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
+public class AddShoppingItemDialogFragment extends AppCompatDialogFragment implements AddShoppingItemPresenter.View {
 
     public static AddShoppingItemDialogFragment newInstance() {
         final AddShoppingItemDialogFragment fragment = new AddShoppingItemDialogFragment();
         return fragment;
     }
 
-    private AddShoppingItemAsyncTask addShoppingItemAsyncTask;
+    private AddShoppingItemPresenter presenter;
+    private EditText nameField;
+    private Button positiveButton;
+    private Button negativeButton;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setCancelable(false);
+
+        presenter = ShoppiApplication.from(getContext()).getAddShoppingItemPresenter();
+
+        if (savedInstanceState == null) {
+            presenter.init();
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         builder.setTitle(R.string.add_shopping_item_title);
-        builder.setCancelable(true);
         builder.setPositiveButton(R.string.add_shopping_item_positive_button, null);
         builder.setNegativeButton(R.string.add_shopping_item_negative_button, null);
 
-        builder.setView(getActivity().getLayoutInflater().inflate(R.layout.fragment_add_shopping_item, null));
+        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_add_shopping_item, null);
 
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
+        builder.setView(view);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                configureButtonBehavior((AlertDialog) dialog);
-            }
-        });
-
-        return dialog;
-    }
-
-    @Override
-    public void onDestroy() {
-        cancelAddShoppingItem();
-        super.onDestroy();
-    }
-
-    private void configureButtonBehavior(final AlertDialog dialog) {
-        final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        final Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        final EditText editText = dialog.findViewById(android.R.id.edit);
-
-        positiveButton.setEnabled(false);
-
-        editText.addTextChangedListener(new TextWatcher() {
+        nameField = view.findViewById(android.R.id.edit);
+        nameField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -74,76 +64,72 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                positiveButton.setEnabled(s.length() > 0);
+                // This gets called twice nested due to the way 2 way binding is handled here
+                presenter.setName(s.toString());
             }
         });
 
+        return builder.create();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        configureButtonBehavior((AlertDialog) getDialog());
+        presenter.onAttach(this);
+    }
+
+    @Override
+    public void onPause() {
+        presenter.onDetach();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        presenter = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void setAddButtonEnabled(boolean enabled) {
+        positiveButton.setEnabled(enabled);
+    }
+
+    @Override
+    public void setNameFieldEnabled(boolean enabled) {
+        nameField.setEnabled(enabled);
+    }
+
+    @Override
+    public void setNameFieldText(String text) {
+        if (!nameField.getText().equals(text)) {
+            nameField.setText(text);
+            nameField.setSelection(text.length());
+        }
+    }
+
+    @Override
+    public void close() {
+        dismiss();
+    }
+
+    private void configureButtonBehavior(final AlertDialog dialog) {
+        positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editText.setEnabled(false);
-                positiveButton.setEnabled(false);
-                addShoppingItem(new ShoppingItem(editText.getText().toString().trim()));
+                presenter.save(nameField.getText().toString().trim());
             }
         });
 
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                presenter.cancel();
             }
         });
     }
 
-    private void addShoppingItem(ShoppingItem shoppingItem) {
-        ShoppingItemRepository shoppingItemRepository = ShoppiApplication.from(getContext()).getShoppingItemRepository();
-        addShoppingItemAsyncTask = new AddShoppingItemAsyncTask(shoppingItemRepository, new AddShoppingItemAsyncTask.Callback() {
-            @Override
-            public void onSucceeded(ShoppingItem shoppingItem) {
-                AddShoppingItemDialogFragment.this.dismiss();
-                addShoppingItemAsyncTask = null;
-            }
-        });
-        addShoppingItemAsyncTask.execute(shoppingItem);
-    }
-
-    private void cancelAddShoppingItem() {
-        if (addShoppingItemAsyncTask != null) {
-            addShoppingItemAsyncTask.destroy();
-            addShoppingItemAsyncTask = null;
-        }
-    }
-
-    private static class AddShoppingItemAsyncTask extends AsyncTask<ShoppingItem, Void, ShoppingItem> {
-
-        private final ShoppingItemRepository repository;
-        private Callback callback;
-
-        interface Callback {
-
-            void onSucceeded(ShoppingItem shoppingItem);
-
-            //void onFailed();
-        }
-
-        public AddShoppingItemAsyncTask(ShoppingItemRepository repository, Callback callback) {
-            this.repository = repository;
-            this.callback = callback;
-        }
-
-        void destroy() {
-            callback = null;
-            cancel(false);
-        }
-
-        @Override
-        protected ShoppingItem doInBackground(ShoppingItem... shoppingItems) {
-            return repository.create(shoppingItems[0]);
-        }
-
-        @Override
-        protected void onPostExecute(ShoppingItem shoppingItem) {
-            callback.onSucceeded(shoppingItem);
-        }
-    }
 }
