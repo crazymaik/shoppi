@@ -23,7 +23,6 @@ public class ShoppiApplication extends Application {
 
         SQLiteOpenHelper sqliteOpenHelper = new SQLiteOpenHelper(this, "main");
         shoppingItemRepository = new SQLiteShoppingItemRepository(sqliteOpenHelper);
-        addShoppingItemPresenter = new AddShoppingItemPresenter(this, shoppingItemRepository);
     }
 
     public ShoppingItemRepository getShoppingItemRepository() {
@@ -31,6 +30,16 @@ public class ShoppiApplication extends Application {
     }
 
     public AddShoppingItemPresenter getAddShoppingItemPresenter() {
-        return addShoppingItemPresenter;
+        if (addShoppingItemPresenter == null) {
+            return new AddShoppingItemPresenter(this, shoppingItemRepository);
+        } else {
+            AddShoppingItemPresenter presenter = addShoppingItemPresenter;
+            addShoppingItemPresenter = null;
+            return presenter;
+        }
+    }
+
+    public void cacheAddShoppingItemPresenter(AddShoppingItemPresenter addShoppingItemPresenter) {
+        this.addShoppingItemPresenter = addShoppingItemPresenter;
     }
 }

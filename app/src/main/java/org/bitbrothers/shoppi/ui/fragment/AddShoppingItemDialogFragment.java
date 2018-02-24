@@ -73,16 +73,22 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         configureButtonBehavior((AlertDialog) getDialog());
         presenter.onAttach(this);
     }
 
     @Override
-    public void onPause() {
+    public void onStop() {
         presenter.onDetach();
-        super.onPause();
+        super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ShoppiApplication.from(getContext()).cacheAddShoppingItemPresenter(presenter);
     }
 
     @Override
