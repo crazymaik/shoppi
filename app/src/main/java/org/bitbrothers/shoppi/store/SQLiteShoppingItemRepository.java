@@ -9,6 +9,10 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleOnSubscribe;
+
 public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     private final SQLiteOpenHelper sqliteOpenHelper;
@@ -18,58 +22,67 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     }
 
     @Override
-    public ShoppingItem create(ShoppingItem shoppingItem) {
-        long id;
+    public Single<ShoppingItem> create(ShoppingItem shoppingItem) {
+        return Single.create((SingleOnSubscribe<Long>) emitter -> {
+            long id;
 
-        try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put("name", shoppingItem.getName());
+            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
+                ContentValues values = new ContentValues();
+                values.put("name", shoppingItem.getName());
 
-            id = db.insert("shopping_items", null, values);
+                id = db.insert("shopping_items", null, values);
 
-        }
+            }
 
-        return get(id);
+            emitter.onSuccess(id);
+        }).flatMap((Long id) -> get(id));
     }
 
     @Override
-    public void delete(long id) {
-        try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-            int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
+    public Observable<Void> delete(long id) {
+        return Observable.create(emitter -> {
+            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
+                int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
 
-            if (deleteCount != 1) {
-                // TODO
+                if (deleteCount != 1) {
+                    emitter.onError(new RuntimeException());
+                }
             }
-        }
+            emitter.onComplete();
+        });
     }
 
     @Override
-    public ShoppingItem get(long id) {
-        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, "id = ?", new String[]{"" + id}, null, null, null)) {
+    public Single<ShoppingItem> get(long id) {
+        return Single.create(emitter -> {
+            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, "id = ?", new String[]{"" + id}, null, null, null)) {
 
-            if (!cursor.moveToNext()) {
-                return null;
+                if (!cursor.moveToNext()) {
+                    emitter.onError(new RuntimeException());
+                }
+
+                emitter.onSuccess(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("name"))));
             }
-
-            return new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("name")));
-        }
+        });
     }
 
     @Override
-    public List<ShoppingItem> getAll() {
-        List<ShoppingItem> items = new ArrayList<>();
-        try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-             Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, "name collate nocase asc")) {
+    public Single<List<ShoppingItem>> getAll() {
+        return Single.create(emitter -> {
+            List<ShoppingItem> items = new ArrayList<>();
+            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name"}, null, null, null, null, "name collate nocase asc")) {
 
-            if (!cursor.isBeforeFirst()) {
-                return null;
-            }
+                if (!cursor.isBeforeFirst()) {
+                    emitter.onError(new RuntimeException());
+                }
 
-            while (cursor.moveToNext()) {
-                items.add(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("name"))));
+                while (cursor.moveToNext()) {
+                    items.add(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")), cursor.getString(cursor.getColumnIndex("name"))));
+                }
             }
-        }
-        return items;
+            emitter.onSuccess(items);
+        });
     }
 }

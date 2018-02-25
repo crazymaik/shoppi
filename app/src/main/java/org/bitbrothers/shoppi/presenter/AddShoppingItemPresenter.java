@@ -1,10 +1,12 @@
 package org.bitbrothers.shoppi.presenter;
 
 import android.content.Context;
-import android.os.Handler;
 
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class AddShoppingItemPresenter {
 
@@ -57,11 +59,14 @@ public class AddShoppingItemPresenter {
 
     public void save(final String name) {
         transition(new SavingState());
-        new Thread(() -> {
-            shoppingItemRepository.create(new ShoppingItem(name));
-            Handler handler = new Handler(context.getMainLooper());
-            handler.post(() -> transition(new SaveCompletedState()));
-        }).start();
+        shoppingItemRepository.create(new ShoppingItem(name))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    transition(new SaveCompletedState());
+                }, error -> {
+                    //transition(new SaveErrorState());
+                });
     }
 
     private void transition(State state) {

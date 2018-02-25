@@ -4,13 +4,16 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
 public interface ShoppingItemRepository {
 
-    ShoppingItem create(ShoppingItem shoppingItem);
+    Single<ShoppingItem> create(ShoppingItem shoppingItem);
 
-    void delete(long id);
+    Observable<Void> delete(long id);
 
-    ShoppingItem get(long id);
+    Single<ShoppingItem> get(long id);
 
-    List<ShoppingItem> getAll();
+    Single<List<ShoppingItem>> getAll();
 }
