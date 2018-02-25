@@ -11,8 +11,9 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class ShoppingItemRepositoryInstrumentedTest {
@@ -26,8 +27,8 @@ public class ShoppingItemRepositoryInstrumentedTest {
         assertNotNull(createdItem.getId());
 
         ShoppingItem retrievedItem = repository.get(createdItem.getId());
-        assertEquals("a", retrievedItem.getName());
-        assertEquals(createdItem, retrievedItem);
+        assertThat(retrievedItem.getName(), is("a"));
+        assertThat(retrievedItem, is(createdItem));
     }
 
     @Test
@@ -39,7 +40,7 @@ public class ShoppingItemRepositoryInstrumentedTest {
         repository.create(new ShoppingItem("b"));
 
         List<ShoppingItem> items = repository.getAll();
-        assertEquals(2, items.size());
+        assertThat(items.size(), is(2));
 
         helper.close();
     }
