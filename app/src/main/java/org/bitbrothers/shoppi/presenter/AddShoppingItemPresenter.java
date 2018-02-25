@@ -57,18 +57,10 @@ public class AddShoppingItemPresenter {
 
     public void save(final String name) {
         transition(new SavingState());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                shoppingItemRepository.create(new ShoppingItem(name));
-                Handler handler = new Handler(context.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        transition(new SaveCompletedState());
-                    }
-                });
-            }
+        new Thread(() -> {
+            shoppingItemRepository.create(new ShoppingItem(name));
+            Handler handler = new Handler(context.getMainLooper());
+            handler.post(() -> transition(new SaveCompletedState()));
         }).start();
     }
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ListView;
 
 import org.bitbrothers.shoppi.R;
@@ -48,12 +47,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(shoppingItemsAdapter);
 
         final FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddShoppingItemDialogFragment.newInstance().show(getSupportFragmentManager(), null);
-            }
-        });
+        fab.setOnClickListener(view -> AddShoppingItemDialogFragment.newInstance().show(getSupportFragmentManager(), null));
     }
 
     @Override
@@ -70,12 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getAllShoppingItems() {
         cancelGetAllShoppingItems();
-        getAllShoppingItemsTask = new GetAllShoppingItems(repository, new GetAllShoppingItems.Callback() {
-            @Override
-            public void onResult(List<ShoppingItem> shoppingItems) {
-                shoppingItemsAdapter.setShoppingItems(shoppingItems);
-                getAllShoppingItemsTask = null;
-            }
+        getAllShoppingItemsTask = new GetAllShoppingItems(repository, shoppingItems -> {
+            shoppingItemsAdapter.setShoppingItems(shoppingItems);
+            getAllShoppingItemsTask = null;
         });
         getAllShoppingItemsTask.execute();
     }

@@ -123,19 +123,9 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
     private void configureButtonBehavior(final AlertDialog dialog) {
         positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.save(nameField.getText().toString().trim());
-            }
-        });
+        positiveButton.setOnClickListener(v -> presenter.save(nameField.getText().toString().trim()));
 
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.cancel();
-            }
-        });
+        negativeButton.setOnClickListener(v -> presenter.cancel());
     }
 
 }
