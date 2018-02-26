@@ -35,7 +35,9 @@ public class BasePresenter<View extends BasePresenter.BaseView> {
 
     public void attach(View view) {
         this.view = view;
-        this.state.onAttach();
+        if (state != null) {
+            this.state.onAttach();
+        }
     }
 
     public void detach() {

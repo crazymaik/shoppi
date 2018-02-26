@@ -3,22 +3,24 @@ package org.bitbrothers.shoppi.ui.activity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
-import org.bitbrothers.shoppi.store.ShoppingItemRepository;
+import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.presenter.BasePresenter;
+import org.bitbrothers.shoppi.presenter.MainPresenter;
 import org.bitbrothers.shoppi.ui.adapter.ShoppingItemsAdapter;
 import org.bitbrothers.shoppi.ui.fragment.AddShoppingItemDialogFragment;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import java.util.List;
+
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity
+        extends BaseAppCompatActivity
+        implements MainPresenter.View {
 
-    private ShoppingItemRepository repository;
     private ShoppingItemsAdapter shoppingItemsAdapter;
     private Disposable getAllDisposable;
 
@@ -37,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
                 .penaltyLog()
                 .build());
 
-        repository = ShoppiApplication.from(this).getShoppingItemRepository();
-
         setContentView(R.layout.activity_main);
 
         shoppingItemsAdapter = new ShoppingItemsAdapter(getLayoutInflater());
@@ -51,33 +51,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        getAllShoppingItems();
+    protected BasePresenter createPresenter() {
+        return ShoppiApplication.from(this).getMainPresenter();
     }
 
     @Override
-    protected void onDestroy() {
-        cancelGetAllShoppingItems();
-        super.onDestroy();
-    }
-
-    private void getAllShoppingItems() {
-        cancelGetAllShoppingItems();
-        getAllDisposable = repository.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shoppingItems -> {
-                    shoppingItemsAdapter.setShoppingItems(shoppingItems);
-                }, error -> {
-                    // TODO
-                });
-    }
-
-    private void cancelGetAllShoppingItems() {
-        if (getAllDisposable != null) {
-            getAllDisposable.dispose();
-            getAllDisposable = null;
-        }
+    public void showShoppingItems(List<ShoppingItem> shoppingItems) {
+        shoppingItemsAdapter.setShoppingItems(shoppingItems);
     }
 }
