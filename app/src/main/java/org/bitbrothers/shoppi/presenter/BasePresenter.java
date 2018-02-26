@@ -1,5 +1,7 @@
 package org.bitbrothers.shoppi.presenter;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 public class BasePresenter<View extends BasePresenter.BaseView> {
 
     public interface BaseView {
@@ -22,9 +24,13 @@ public class BasePresenter<View extends BasePresenter.BaseView> {
 
     protected View view;
     protected State state;
+    protected CompositeDisposable disposables;
 
     public BasePresenter() {
+        this.disposables = new CompositeDisposable();
+    }
 
+    public void init() {
     }
 
     public void attach(View view) {
@@ -32,9 +38,12 @@ public class BasePresenter<View extends BasePresenter.BaseView> {
         this.state.onAttach();
     }
 
-    public void detach(boolean isFinishing) {
-        // TODO set up caching when isFinishing is false
+    public void detach() {
         this.view = null;
+    }
+
+    public void destroy() {
+        disposables.dispose();
     }
 
     protected void transition(State newState) {

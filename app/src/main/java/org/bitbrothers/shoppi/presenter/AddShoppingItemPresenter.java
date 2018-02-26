@@ -26,6 +26,7 @@ public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPrese
         this.shoppingItemRepository = shoppingItemRepository;
     }
 
+    @Override
     public void init() {
         this.name = "";
         transition(new EditingState());
@@ -44,14 +45,14 @@ public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPrese
 
     public void save() {
         transition(new SavingState());
-        shoppingItemRepository.create(new ShoppingItem(name))
+        disposables.add(shoppingItemRepository.create(new ShoppingItem(name))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     transition(new SaveCompletedState());
                 }, error -> {
                     //transition(new SaveErrorState());
-                });
+                }));
     }
 
     private class EditingState extends State {

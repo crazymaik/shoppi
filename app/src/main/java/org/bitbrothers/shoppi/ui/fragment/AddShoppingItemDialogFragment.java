@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,14 +14,15 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.presenter.AddShoppingItemPresenter;
 
-public class AddShoppingItemDialogFragment extends AppCompatDialogFragment implements AddShoppingItemPresenter.View {
+public class AddShoppingItemDialogFragment
+        extends BaseDialogFragment<AddShoppingItemPresenter>
+        implements AddShoppingItemPresenter.View {
 
     public static AddShoppingItemDialogFragment newInstance() {
         final AddShoppingItemDialogFragment fragment = new AddShoppingItemDialogFragment();
         return fragment;
     }
 
-    private AddShoppingItemPresenter presenter;
     private EditText nameField;
     private Button positiveButton;
     private Button negativeButton;
@@ -30,14 +30,7 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setCancelable(false);
-
-        presenter = ShoppiApplication.from(getContext()).getAddShoppingItemPresenter();
-
-        if (savedInstanceState == null) {
-            presenter.init();
-        }
     }
 
     @Override
@@ -76,25 +69,6 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
     public void onStart() {
         super.onStart();
         configureButtonBehavior((AlertDialog) getDialog());
-        presenter.attach(this);
-    }
-
-    @Override
-    public void onStop() {
-        presenter.detach(getActivity().isFinishing());
-        super.onStop();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        ShoppiApplication.from(getContext()).cacheAddShoppingItemPresenter(presenter);
-    }
-
-    @Override
-    public void onDestroy() {
-        presenter = null;
-        super.onDestroy();
     }
 
     @Override
@@ -120,6 +94,11 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
         dismiss();
     }
 
+    @Override
+    protected AddShoppingItemPresenter createPresenter() {
+        return ShoppiApplication.from(getContext()).getAddShoppingItemPresenter();
+    }
+
     private void configureButtonBehavior(final AlertDialog dialog) {
         positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
@@ -127,5 +106,4 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
 
         negativeButton.setOnClickListener(v -> presenter.cancel());
     }
-
 }
