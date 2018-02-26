@@ -39,7 +39,7 @@ public class AddShoppingItemPresenter {
 
     public void attach(View view) {
         this.view = view;
-        this.state.apply();
+        this.state.onAttach();
     }
 
     public void detach() {
@@ -76,21 +76,38 @@ public class AddShoppingItemPresenter {
         }
     }
 
-    private class State {
-        protected void apply() {
+    private abstract class State {
+
+        protected abstract void onAttach();
+
+        protected abstract void apply();
+    }
+
+    private abstract class SimpleState extends State {
+
+        @Override
+        protected void onAttach() {
+            apply();
         }
     }
 
     private class EditingState extends State {
+
         @Override
-        protected void apply() {
+        protected void onAttach() {
             view.setAddButtonEnabled(!name.isEmpty());
             view.setNameFieldEnabled(true);
             view.setNameFieldText(name);
         }
+
+        @Override
+        protected void apply() {
+            view.setAddButtonEnabled(!name.isEmpty());
+            view.setNameFieldEnabled(true);
+        }
     }
 
-    private class SavingState extends State {
+    private class SavingState extends SimpleState {
         @Override
         protected void apply() {
             view.setAddButtonEnabled(false);
@@ -99,7 +116,7 @@ public class AddShoppingItemPresenter {
         }
     }
 
-    private class SaveCompletedState extends State {
+    private class SaveCompletedState extends SimpleState {
         @Override
         protected void apply() {
             view.setAddButtonEnabled(false);
