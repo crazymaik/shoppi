@@ -59,7 +59,7 @@ public class AddShoppingItemPresenterTest {
         AddShoppingItemPresenter.View view = mock(AddShoppingItemPresenter.View.class);
         presenter.onAttach(view);
         presenter.setName("a");
-        presenter.save("a");
-        assertThat(shoppingItemRepository.getAll().size(), is(1));
+        presenter.save();
+        assertThat(shoppingItemRepository.getAll().test().values().size(), is(1));
     }
 }

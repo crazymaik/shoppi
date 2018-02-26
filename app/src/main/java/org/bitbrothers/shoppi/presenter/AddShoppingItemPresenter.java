@@ -57,7 +57,7 @@ public class AddShoppingItemPresenter {
         this.view.close();
     }
 
-    public void save(final String name) {
+    public void save() {
         transition(new SavingState());
         shoppingItemRepository.create(new ShoppingItem(name))
                 .subscribeOn(Schedulers.io())
