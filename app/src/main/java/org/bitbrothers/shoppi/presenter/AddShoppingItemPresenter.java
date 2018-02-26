@@ -1,7 +1,5 @@
 package org.bitbrothers.shoppi.presenter;
 
-import android.content.Context;
-
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
@@ -21,14 +19,12 @@ public class AddShoppingItemPresenter {
         void close();
     }
 
-    private final Context context;
     private final ShoppingItemRepository shoppingItemRepository;
     private State state;
     private String name;
     private View view;
 
-    public AddShoppingItemPresenter(Context context, ShoppingItemRepository shoppingItemRepository) {
-        this.context = context;
+    public AddShoppingItemPresenter(ShoppingItemRepository shoppingItemRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
     }
 
