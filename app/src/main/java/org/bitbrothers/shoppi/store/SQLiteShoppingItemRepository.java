@@ -9,7 +9,7 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
 
@@ -39,8 +39,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     }
 
     @Override
-    public Observable<Void> delete(long id) {
-        return Observable.create(emitter -> {
+    public Completable delete(long id) {
+        return Completable.create(emitter -> {
             try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
                 int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
 
