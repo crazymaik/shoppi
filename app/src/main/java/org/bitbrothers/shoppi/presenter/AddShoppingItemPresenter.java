@@ -6,9 +6,9 @@ import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddShoppingItemPresenter {
+public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPresenter.View> {
 
-    public interface View {
+    public interface View extends BasePresenter.BaseView {
 
         void setAddButtonEnabled(boolean enabled);
 
@@ -20,26 +20,15 @@ public class AddShoppingItemPresenter {
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
-    private State state;
     private String name;
-    private View view;
 
     public AddShoppingItemPresenter(ShoppingItemRepository shoppingItemRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
     }
 
     public void init() {
-        this.state = new EditingState();
         this.name = "";
-    }
-
-    public void attach(View view) {
-        this.view = view;
-        this.state.onAttach();
-    }
-
-    public void detach() {
-        this.view = null;
+        transition(new EditingState());
     }
 
     public void setName(String name) {
@@ -63,28 +52,6 @@ public class AddShoppingItemPresenter {
                 }, error -> {
                     //transition(new SaveErrorState());
                 });
-    }
-
-    private void transition(State state) {
-        this.state = state;
-        if (view != null) {
-            this.state.apply();
-        }
-    }
-
-    private abstract class State {
-
-        protected abstract void onAttach();
-
-        protected abstract void apply();
-    }
-
-    private abstract class SimpleState extends State {
-
-        @Override
-        protected void onAttach() {
-            apply();
-        }
     }
 
     private class EditingState extends State {

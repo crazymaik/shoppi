@@ -81,7 +81,7 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
 
     @Override
     public void onStop() {
-        presenter.detach();
+        presenter.detach(getActivity().isFinishing());
         super.onStop();
     }
 

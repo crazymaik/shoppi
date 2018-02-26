@@ -1,7 +1,5 @@
 package org.bitbrothers.shoppi.presenter;
 
-import android.support.test.InstrumentationRegistry;
-
 import org.bitbrothers.shoppi.store.SQLiteShoppingItemRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 import org.bitbrothers.shoppi.support.DatabaseRule;
@@ -27,7 +25,7 @@ public class AddShoppingItemPresenterTest {
     @Before
     public void setUp() {
         shoppingItemRepository = new SQLiteShoppingItemRepository(databaseRule.getSQLiteOpenHelper());
-        presenter = new AddShoppingItemPresenter(InstrumentationRegistry.getTargetContext(), shoppingItemRepository);
+        presenter = new AddShoppingItemPresenter(shoppingItemRepository);
     }
 
     @Test

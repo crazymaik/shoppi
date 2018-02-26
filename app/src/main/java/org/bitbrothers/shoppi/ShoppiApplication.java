@@ -31,7 +31,7 @@ public class ShoppiApplication extends Application {
 
     public AddShoppingItemPresenter getAddShoppingItemPresenter() {
         if (addShoppingItemPresenter == null) {
-            return new AddShoppingItemPresenter(this, shoppingItemRepository);
+            return new AddShoppingItemPresenter(shoppingItemRepository);
         } else {
             AddShoppingItemPresenter presenter = addShoppingItemPresenter;
             addShoppingItemPresenter = null;
