@@ -76,12 +76,12 @@ public class AddShoppingItemDialogFragment extends AppCompatDialogFragment imple
     public void onStart() {
         super.onStart();
         configureButtonBehavior((AlertDialog) getDialog());
-        presenter.onAttach(this);
+        presenter.attach(this);
     }
 
     @Override
     public void onStop() {
-        presenter.onDetach();
+        presenter.detach();
         super.onStop();
     }
 

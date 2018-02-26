@@ -34,7 +34,7 @@ public class AddShoppingItemPresenterTest {
     public void initialViewSetup() {
         presenter.init();
         AddShoppingItemPresenter.View view = mock(AddShoppingItemPresenter.View.class);
-        presenter.onAttach(view);
+        presenter.attach(view);
         verify(view).setAddButtonEnabled(false);
         verify(view).setNameFieldEnabled(true);
     }
@@ -43,7 +43,7 @@ public class AddShoppingItemPresenterTest {
     public void textInNameField_shouldControlAddButtonEnabledState() {
         presenter.init();
         AddShoppingItemPresenter.View view = mock(AddShoppingItemPresenter.View.class);
-        presenter.onAttach(view);
+        presenter.attach(view);
         reset(view);
         presenter.setName("a");
         verify(view).setAddButtonEnabled(true);
@@ -57,7 +57,7 @@ public class AddShoppingItemPresenterTest {
     public void saveShoppingItem_shouldCreateItemInRepository() {
         presenter.init();
         AddShoppingItemPresenter.View view = mock(AddShoppingItemPresenter.View.class);
-        presenter.onAttach(view);
+        presenter.attach(view);
         presenter.setName("a");
         presenter.save();
         assertThat(shoppingItemRepository.getAll().test().values().size(), is(1));

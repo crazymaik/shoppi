@@ -37,12 +37,12 @@ public class AddShoppingItemPresenter {
         this.name = "";
     }
 
-    public void onAttach(View view) {
+    public void attach(View view) {
         this.view = view;
         this.state.apply();
     }
 
-    public void onDetach() {
+    public void detach() {
         this.view = null;
     }
 
