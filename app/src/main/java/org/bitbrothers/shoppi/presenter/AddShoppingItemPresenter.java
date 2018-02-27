@@ -16,6 +16,8 @@ public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPrese
 
         void setNameFieldText(String text);
 
+        void showSaveFailedErrorMessage();
+
         void close();
     }
 
@@ -45,14 +47,14 @@ public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPrese
 
     public void save() {
         transition(new SavingState());
-        disposables.add(shoppingItemRepository.create(new ShoppingItem(name))
+        shoppingItemRepository.create(new ShoppingItem(name))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     transition(new SaveCompletedState());
                 }, error -> {
-                    //transition(new SaveErrorState());
-                }));
+                    transition(new SaveErrorState());
+                });
     }
 
     private class EditingState extends State {
@@ -77,6 +79,14 @@ public class AddShoppingItemPresenter extends BasePresenter<AddShoppingItemPrese
             view.setAddButtonEnabled(false);
             view.setNameFieldEnabled(false);
             view.setNameFieldText(name);
+        }
+    }
+
+    private class SaveErrorState extends SimpleState {
+        @Override
+        protected void apply() {
+            view.showSaveFailedErrorMessage();
+            transition(new EditingState());
         }
     }
 

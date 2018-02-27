@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
@@ -87,6 +88,11 @@ public class AddShoppingItemDialogFragment
             nameField.setText(text);
             nameField.setSelection(text.length());
         }
+    }
+
+    @Override
+    public void showSaveFailedErrorMessage() {
+        Toast.makeText(getActivity(), R.string.add_shopping_item_save_error, Toast.LENGTH_LONG).show();
     }
 
     @Override

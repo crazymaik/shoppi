@@ -3,4 +3,5 @@
     <string name="add_shopping_item_title">Add item</string>
     <string name="add_shopping_item_positive_button">Add</string>
     <string name="add_shopping_item_negative_button">Cancel</string>
+    <string name="add_shopping_item_save_error">Saving shopping item failed</string>
 </resources>
