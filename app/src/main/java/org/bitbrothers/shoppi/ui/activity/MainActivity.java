@@ -3,6 +3,7 @@ package org.bitbrothers.shoppi.ui.activity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 import org.bitbrothers.shoppi.R;
@@ -15,14 +16,11 @@ import org.bitbrothers.shoppi.ui.fragment.AddShoppingItemDialogFragment;
 
 import java.util.List;
 
-import io.reactivex.disposables.Disposable;
-
 public class MainActivity
         extends BaseAppCompatActivity
         implements MainPresenter.View {
 
     private ShoppingItemsAdapter shoppingItemsAdapter;
-    private Disposable getAllDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +38,9 @@ public class MainActivity
                 .build());
 
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         shoppingItemsAdapter = new ShoppingItemsAdapter(getLayoutInflater());
 

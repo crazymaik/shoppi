@@ -7,10 +7,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintBottom_toTopOf="@android:id/list"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:listitem="@layout/li_shopping_item" />
 
     <android.support.design.widget.FloatingActionButton
