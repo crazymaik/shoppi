@@ -4,4 +4,6 @@
     <string name="add_shopping_item_positive_button">Add</string>
     <string name="add_shopping_item_negative_button">Cancel</string>
     <string name="add_shopping_item_save_error">Saving shopping item failed</string>
+    <string name="tab_all_items">All Items</string>
+    <string name="tab_shopping_list">Shopping List</string>
 </resources>

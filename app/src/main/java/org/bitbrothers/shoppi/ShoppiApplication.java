@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import org.bitbrothers.shoppi.presenter.AddShoppingItemPresenter;
+import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
 import org.bitbrothers.shoppi.presenter.ShoppingListPresenter;
@@ -47,6 +48,10 @@ public class ShoppiApplication extends Application {
 
     public AddShoppingItemPresenter getAddShoppingItemPresenter() {
         return new AddShoppingItemPresenter(shoppingItemRepository);
+    }
+
+    public AllShoppingItemsPresenter getAllShoppingItemsPresenter() {
+        return new AllShoppingItemsPresenter(shoppingItemRepository);
     }
 
     public MainPresenter getMainPresenter() {

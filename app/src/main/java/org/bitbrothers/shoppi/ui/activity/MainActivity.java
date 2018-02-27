@@ -1,7 +1,9 @@
 package org.bitbrothers.shoppi.ui.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,6 +14,7 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
+import org.bitbrothers.shoppi.ui.fragment.AllShoppingItemsFragment;
 import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
 
 public class MainActivity
@@ -39,7 +42,10 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         ViewPager viewPager = findViewById(R.id.pager);
-        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new PagerAdapter(this, getSupportFragmentManager()));
+
+        TabLayout tabLayout = findViewById(R.id.pager_tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -49,8 +55,11 @@ public class MainActivity
 
     private static class PagerAdapter extends FragmentPagerAdapter {
 
-        public PagerAdapter(FragmentManager fm) {
+        private final Context context;
+
+        public PagerAdapter(Context context, FragmentManager fm) {
             super(fm);
+            this.context = context;
         }
 
         @Override
@@ -58,6 +67,20 @@ public class MainActivity
             switch (position) {
                 case 0:
                     return new ShoppingListFragment();
+                case 1:
+                    return new AllShoppingItemsFragment();
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return context.getString(R.string.tab_shopping_list);
+                case 1:
+                    return context.getString(R.string.tab_all_items);
                 default:
                     throw new IllegalArgumentException();
             }
@@ -65,7 +88,7 @@ public class MainActivity
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
     }
 

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
+        android:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintBottom_toTopOf="@id/pager"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -22,6 +22,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <android.support.design.widget.TabLayout
+            style="@style/TabLayout"
+            android:id="@+id/pager_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>
