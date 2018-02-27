@@ -2,25 +2,21 @@ package org.bitbrothers.shoppi.ui.activity;
 
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
-import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
-import org.bitbrothers.shoppi.ui.adapter.ShoppingItemsAdapter;
-import org.bitbrothers.shoppi.ui.fragment.AddShoppingItemDialogFragment;
-
-import java.util.List;
+import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
 
 public class MainActivity
         extends BaseAppCompatActivity
         implements MainPresenter.View {
-
-    private ShoppingItemsAdapter shoppingItemsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +38,8 @@ public class MainActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        shoppingItemsAdapter = new ShoppingItemsAdapter(getLayoutInflater());
-
-        ListView listView = findViewById(android.R.id.list);
-        listView.setAdapter(shoppingItemsAdapter);
-
-        final FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> AddShoppingItemDialogFragment.newInstance().show(getSupportFragmentManager(), null));
+        ViewPager viewPager = findViewById(R.id.pager);
+        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
     }
 
     @Override
@@ -56,8 +47,26 @@ public class MainActivity
         return ShoppiApplication.from(this).getMainPresenter();
     }
 
-    @Override
-    public void showShoppingItems(List<ShoppingItem> shoppingItems) {
-        shoppingItemsAdapter.setShoppingItems(shoppingItems);
+    private static class PagerAdapter extends FragmentPagerAdapter {
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new ShoppingListFragment();
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
     }
+
 }

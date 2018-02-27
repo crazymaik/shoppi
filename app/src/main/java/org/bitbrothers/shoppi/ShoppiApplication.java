@@ -6,6 +6,7 @@ import android.content.Context;
 import org.bitbrothers.shoppi.presenter.AddShoppingItemPresenter;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
+import org.bitbrothers.shoppi.presenter.ShoppingListPresenter;
 import org.bitbrothers.shoppi.store.SQLiteOpenHelper;
 import org.bitbrothers.shoppi.store.SQLiteShoppingItemRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
@@ -49,6 +50,10 @@ public class ShoppiApplication extends Application {
     }
 
     public MainPresenter getMainPresenter() {
-        return new MainPresenter(shoppingItemRepository);
+        return new MainPresenter();
+    }
+
+    public ShoppingListPresenter getShoppingListPresenter() {
+        return new ShoppingListPresenter(shoppingItemRepository);
     }
 }
