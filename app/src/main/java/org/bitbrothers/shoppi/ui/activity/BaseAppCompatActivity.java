@@ -15,6 +15,7 @@ public abstract class BaseAppCompatActivity<Presenter extends BasePresenter>
 
     protected Presenter presenter;
     private String presenterCacheKey;
+    private boolean destroyedBySystem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +49,15 @@ public abstract class BaseAppCompatActivity<Presenter extends BasePresenter>
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_PRESENTER_CACHE, presenterCacheKey);
+        destroyedBySystem = true;
     }
 
     @Override
     protected void onDestroy() {
-        if (isFinishing()) {
-            presenter.destroy();
-        } else {
+        if (destroyedBySystem) {
             ShoppiApplication.from(this).cachePresenter(presenterCacheKey, presenter);
+        } else {
+            presenter.destroy();
         }
         presenter = null;
         super.onDestroy();

@@ -17,6 +17,7 @@ public abstract class BaseDialogFragment<Presenter extends BasePresenter>
 
     protected Presenter presenter;
     private String presenterCacheKey;
+    private boolean destroyedBySystem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,14 +51,15 @@ public abstract class BaseDialogFragment<Presenter extends BasePresenter>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_PRESENTER_CACHE, presenterCacheKey);
+        destroyedBySystem = true;
     }
 
     @Override
     public void onDestroy() {
-        if (getActivity().isFinishing()) {
-            presenter.destroy();
-        } else {
+        if (destroyedBySystem) {
             ShoppiApplication.from(getContext()).cachePresenter(presenterCacheKey, presenter);
+        } else {
+            presenter.destroy();
         }
         presenter = null;
         super.onDestroy();
