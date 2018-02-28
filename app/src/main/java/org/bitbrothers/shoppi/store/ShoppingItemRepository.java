@@ -16,4 +16,10 @@ public interface ShoppingItemRepository {
     Single<ShoppingItem> get(long id);
 
     Single<List<ShoppingItem>> getAll();
+
+    Single<List<ShoppingItem>> getUnbought();
+
+    Single<ShoppingItem> markBought(ShoppingItem shoppingItem);
+
+    Single<ShoppingItem> unmarkBought(ShoppingItem shoppingItem);
 }

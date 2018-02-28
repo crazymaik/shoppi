@@ -34,7 +34,7 @@ public class ShoppingItemsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return shoppingItems.get(position).getId();
     }
 
     @Override
@@ -45,8 +45,12 @@ public class ShoppingItemsAdapter extends BaseAdapter {
             listItem = layoutInflater.inflate(R.layout.li_shopping_item, parent, false);
         }
 
+        ShoppingItem shoppingItem = getItem(position);
+
         TextView textView = listItem.findViewById(android.R.id.text1);
-        textView.setText(getItem(position).getName());
+        textView.setText(shoppingItem.getName());
+
+        textView.setTextAppearance(shoppingItem.isBought() ? R.style.BoughtShoppingItemTextAppearance : R.style.TextAppearance_AppCompat_Medium);
 
         return listItem;
     }
@@ -54,5 +58,15 @@ public class ShoppingItemsAdapter extends BaseAdapter {
     public void setShoppingItems(List<ShoppingItem> shoppingItems) {
         this.shoppingItems = shoppingItems;
         notifyDataSetChanged();
+    }
+
+    public void updateShoppingItem(ShoppingItem shoppingItem) {
+        for (int i = 0; i < shoppingItems.size(); ++i) {
+            if (shoppingItems.get(i).getId() == shoppingItem.getId()) {
+                shoppingItems.set(i, shoppingItem);
+                notifyDataSetChanged();
+                break;
+            }
+        }
     }
 }

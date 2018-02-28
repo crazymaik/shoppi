@@ -19,4 +19,8 @@
         <item name="android:textColor">@color/white_semitransparent</item>
     </style>
 
+    <style name="BoughtShoppingItemTextAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
+
 </resources>

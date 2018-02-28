@@ -40,7 +40,7 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     }
 
     private void retrieveShoppingItems() {
-        getAllDisposable = shoppingItemRepository.getAll()
+        getAllDisposable = shoppingItemRepository.getUnbought()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {

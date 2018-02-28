@@ -11,7 +11,7 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE shopping_items ( id integer primary key, name text not null);");
+        db.execSQL("CREATE TABLE shopping_items ( id integer primary key, name text not null, bought integer not null);");
     }
 
     @Override

@@ -7,15 +7,18 @@ public class ShoppingItem {
 
     private final Long id;
     private final String name;
+    private final boolean bought;
 
     public ShoppingItem(String name) {
         this.id = null;
         this.name = name;
+        this.bought = false;
     }
 
-    public ShoppingItem(long id, String name) {
+    public ShoppingItem(long id, String name, boolean bought) {
         this.id = id;
         this.name = name;
+        this.bought = bought;
     }
 
     public Long getId() {
@@ -24,6 +27,18 @@ public class ShoppingItem {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isBought() {
+        return bought;
+    }
+
+    public ShoppingItem markBought() {
+        return new ShoppingItem(id, name, true);
+    }
+
+    public ShoppingItem markUnbought() {
+        return new ShoppingItem(id, name, false);
     }
 
     @Override
@@ -37,6 +52,9 @@ public class ShoppingItem {
 
         ShoppingItem that = (ShoppingItem) o;
 
+        if (bought != that.bought) {
+            return false;
+        }
         if (id != null ? !id.equals(that.id) : that.id != null) {
             return false;
         }
@@ -47,6 +65,7 @@ public class ShoppingItem {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (bought ? 1 : 0);
         return result;
     }
 }
