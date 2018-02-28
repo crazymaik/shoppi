@@ -13,6 +13,8 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
 
     public interface View extends BasePresenter.BaseView {
 
+        void removeShoppingItem(ShoppingItem shoppingItem);
+
         void showShoppingItems(List<ShoppingItem> shoppingItems);
 
         void updateShoppingItem(ShoppingItem shoppingItem);
@@ -30,14 +32,31 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
         retrieveShoppingItems();
     }
 
+    public void deleteShoppingItem(ShoppingItem shoppingItem) {
+        shoppingItemRepository.delete(shoppingItem.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (view != null) {
+                        view.removeShoppingItem(shoppingItem);
+                    }
+                }, error -> {
+
+                });
+    }
+
     public void markBought(ShoppingItem shoppingItem) {
         shoppingItemRepository.markBought(shoppingItem)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
-                    view.updateShoppingItem(updatedShoppingItem);
+                    if (view != null) {
+                        view.updateShoppingItem(updatedShoppingItem);
+                    }
                 }, error -> {
-                    view.updateShoppingItem(shoppingItem);
+                    if (view != null) {
+                        view.updateShoppingItem(shoppingItem);
+                    }
                 });
     }
 
@@ -46,9 +65,13 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
-                    view.updateShoppingItem(updatedShoppingItem);
+                    if (view != null) {
+                        view.updateShoppingItem(updatedShoppingItem);
+                    }
                 }, error -> {
-                    view.updateShoppingItem(shoppingItem);
+                    if (view != null) {
+                        view.updateShoppingItem(shoppingItem);
+                    }
                 });
     }
 
@@ -57,7 +80,9 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
-                    view.showShoppingItems(shoppingItems);
+                    if (view != null) {
+                        view.showShoppingItems(shoppingItems);
+                    }
                 }, error -> {
                     // TODO
                 });
