@@ -15,6 +15,8 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     public interface View extends BasePresenter.BaseView {
 
         void showShoppingItems(List<ShoppingItem> shoppingItems);
+
+        void removeShoppingItem(ShoppingItem shoppingItem);
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
@@ -37,6 +39,19 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
             getAllDisposable = null;
         }
         super.detach();
+    }
+
+    public void markBought(ShoppingItem shoppingItem) {
+        shoppingItemRepository.markBought(shoppingItem)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItems -> {
+                    if (view != null) {
+                        view.removeShoppingItem(shoppingItem);
+                    }
+                }, error -> {
+
+                });
     }
 
     private void retrieveShoppingItems() {
