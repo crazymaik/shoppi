@@ -66,6 +66,14 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 });
     }
 
+    @Override
+    public void detach() {
+        onItemAddedDisposable.dispose();
+        onItemRemovedDisposable.dispose();
+        onItemBoughtStateChangedDisposable.dispose();
+        super.detach();
+    }
+
     public void deleteShoppingItem(ShoppingItem shoppingItem) {
         shoppingItemRepository.delete(shoppingItem.getId())
                 .subscribeOn(Schedulers.io())

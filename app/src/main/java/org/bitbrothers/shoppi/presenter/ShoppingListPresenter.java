@@ -57,6 +57,7 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     @Override
     public void detach() {
         onItemAddedDisposable.dispose();
+        onItemRemovedDisposable.dispose();
         super.detach();
     }
 
