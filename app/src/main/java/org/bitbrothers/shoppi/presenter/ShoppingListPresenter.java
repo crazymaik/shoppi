@@ -16,11 +16,12 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
 
         void showShoppingItems(List<ShoppingItem> shoppingItems);
 
-        void removeShoppingItem(ShoppingItem shoppingItem);
+        void removeShoppingItem(long id);
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
-    private Disposable getAllDisposable;
+    private Disposable onItemAddedDisposable;
+    private Disposable onItemRemovedDisposable;
 
     public ShoppingListPresenter(ShoppingItemRepository shoppingItemRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
@@ -29,15 +30,33 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     @Override
     public void attach(View view) {
         super.attach(view);
+
         retrieveShoppingItems();
+
+        onItemAddedDisposable = shoppingItemRepository.getOnItemAddedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+
+                });
+
+        onItemRemovedDisposable = shoppingItemRepository.getOnItemRemovedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(id -> {
+                    if (view != null) {
+                        view.removeShoppingItem(id);
+                    }
+                }, error -> {
+
+                });
     }
 
     @Override
     public void detach() {
-        if (getAllDisposable != null) {
-            getAllDisposable.dispose();
-            getAllDisposable = null;
-        }
+        onItemAddedDisposable.dispose();
         super.detach();
     }
 
@@ -47,7 +66,7 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
                     if (view != null) {
-                        view.removeShoppingItem(shoppingItem);
+                        view.removeShoppingItem(shoppingItem.getId());
                     }
                 }, error -> {
 
@@ -55,13 +74,16 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     }
 
     private void retrieveShoppingItems() {
-        getAllDisposable = shoppingItemRepository.getUnbought()
+        shoppingItemRepository.getUnbought()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
-                    view.showShoppingItems(shoppingItems);
+                    if (view != null) {
+                        view.showShoppingItems(shoppingItems);
+                    }
                 }, error -> {
                     // TODO
                 });
+
     }
 }

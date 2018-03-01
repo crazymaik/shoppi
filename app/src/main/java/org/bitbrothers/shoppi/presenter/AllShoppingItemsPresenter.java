@@ -7,13 +7,14 @@ import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPresenter.View> {
 
     public interface View extends BasePresenter.BaseView {
 
-        void removeShoppingItem(ShoppingItem shoppingItem);
+        void removeShoppingItem(long id);
 
         void showShoppingItems(List<ShoppingItem> shoppingItems);
 
@@ -21,6 +22,8 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
+    private Disposable onItemAddedDisposable;
+    private Disposable onItemRemovedDisposable;
 
     public AllShoppingItemsPresenter(ShoppingItemRepository shoppingItemRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
@@ -29,7 +32,28 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
     @Override
     public void attach(View view) {
         super.attach(view);
+
         retrieveShoppingItems();
+
+        onItemAddedDisposable = shoppingItemRepository.getOnItemAddedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+
+                });
+
+        onItemRemovedDisposable = shoppingItemRepository.getOnItemRemovedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(id -> {
+                    if (view != null) {
+                        view.removeShoppingItem(id);
+                    }
+                }, error -> {
+
+                });
     }
 
     public void deleteShoppingItem(ShoppingItem shoppingItem) {
@@ -37,11 +61,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    if (view != null) {
-                        view.removeShoppingItem(shoppingItem);
-                    }
                 }, error -> {
-
                 });
     }
 

@@ -56,8 +56,8 @@ public class ShoppingListFragment
     }
 
     @Override
-    public void removeShoppingItem(ShoppingItem shoppingItem) {
-        shoppingListAdapter.removeShoppingItem(shoppingItem);
+    public void removeShoppingItem(long id) {
+        shoppingListAdapter.removeShoppingItem(id);
     }
 
     @Override

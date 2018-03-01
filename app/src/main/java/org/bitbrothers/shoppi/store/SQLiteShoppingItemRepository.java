@@ -10,15 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     private final SQLiteOpenHelper sqliteOpenHelper;
 
+    private final Subject<ShoppingItem> onItemAddedSubject;
+    private final Subject<Long> onItemRemovedSubject;
+
     public SQLiteShoppingItemRepository(SQLiteOpenHelper sqLiteOpenHelper) {
         this.sqliteOpenHelper = sqLiteOpenHelper;
+        this.onItemAddedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
+        this.onItemRemovedSubject = PublishSubject.<Long>create().toSerialized();
     }
 
     @Override
@@ -36,7 +44,10 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             }
 
             emitter.onSuccess(id);
-        }).flatMap((Long id) -> get(id));
+        }).flatMap((Long id) -> get(id)).map((item) -> {
+            onItemAddedSubject.onNext(item);
+            return item;
+        });
     }
 
     @Override
@@ -50,6 +61,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 }
             }
             emitter.onComplete();
+        }).doOnComplete(() -> {
+            onItemRemovedSubject.onNext(id);
         });
     }
 
@@ -120,6 +133,16 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 emitter.onSuccess(shoppingItem.getId());
             }
         }).flatMap(id -> get(id));
+    }
+
+    @Override
+    public Observable<ShoppingItem> getOnItemAddedObservable() {
+        return onItemAddedSubject;
+    }
+
+    @Override
+    public Observable<Long> getOnItemRemovedObservable() {
+        return onItemRemovedSubject;
     }
 
     private List<ShoppingItem> cursorToList(Cursor cursor) {
