@@ -22,11 +22,13 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
     private final Subject<ShoppingItem> onItemAddedSubject;
     private final Subject<Long> onItemRemovedSubject;
+    private final Subject<ShoppingItem> onItemBoughtStateChangedSubject;
 
     public SQLiteShoppingItemRepository(SQLiteOpenHelper sqLiteOpenHelper) {
         this.sqliteOpenHelper = sqLiteOpenHelper;
         this.onItemAddedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
         this.onItemRemovedSubject = PublishSubject.<Long>create().toSerialized();
+        this.onItemBoughtStateChangedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
     }
 
     @Override
@@ -44,10 +46,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             }
 
             emitter.onSuccess(id);
-        }).flatMap((Long id) -> get(id)).map((item) -> {
-            onItemAddedSubject.onNext(item);
-            return item;
-        });
+        }).flatMap((Long id) -> get(id)).doOnSuccess(onItemAddedSubject::onNext);
     }
 
     @Override
@@ -61,9 +60,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 }
             }
             emitter.onComplete();
-        }).doOnComplete(() -> {
-            onItemRemovedSubject.onNext(id);
-        });
+        }).doOnComplete(() -> onItemRemovedSubject.onNext(id));
     }
 
     @Override
@@ -117,7 +114,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 }
                 emitter.onSuccess(shoppingItem.getId());
             }
-        }).flatMap(id -> get(id));
+        }).flatMap(id -> get(id)).doOnSuccess(onItemBoughtStateChangedSubject::onNext);
     }
 
     @Override
@@ -132,7 +129,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 }
                 emitter.onSuccess(shoppingItem.getId());
             }
-        }).flatMap(id -> get(id));
+        }).flatMap(id -> get(id)).doOnSuccess(onItemBoughtStateChangedSubject::onNext);
     }
 
     @Override
@@ -143,6 +140,11 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Observable<Long> getOnItemRemovedObservable() {
         return onItemRemovedSubject;
+    }
+
+    @Override
+    public Observable<ShoppingItem> getOnItemBoughtStateChangedObservable() {
+        return onItemBoughtStateChangedSubject;
     }
 
     private List<ShoppingItem> cursorToList(Cursor cursor) {

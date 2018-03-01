@@ -24,6 +24,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
     private final ShoppingItemRepository shoppingItemRepository;
     private Disposable onItemAddedDisposable;
     private Disposable onItemRemovedDisposable;
+    private Disposable onItemBoughtStateChangedDisposable;
 
     public AllShoppingItemsPresenter(ShoppingItemRepository shoppingItemRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
@@ -54,6 +55,15 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 }, error -> {
 
                 });
+
+        onItemBoughtStateChangedDisposable = shoppingItemRepository.getOnItemBoughtStateChangedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    view.updateShoppingItem(shoppingItem);
+                }, error -> {
+
+                });
     }
 
     public void deleteShoppingItem(ShoppingItem shoppingItem) {
@@ -70,13 +80,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
-                    if (view != null) {
-                        view.updateShoppingItem(updatedShoppingItem);
-                    }
                 }, error -> {
-                    if (view != null) {
-                        view.updateShoppingItem(shoppingItem);
-                    }
                 });
     }
 
@@ -85,13 +89,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
-                    if (view != null) {
-                        view.updateShoppingItem(updatedShoppingItem);
-                    }
                 }, error -> {
-                    if (view != null) {
-                        view.updateShoppingItem(shoppingItem);
-                    }
                 });
     }
 
