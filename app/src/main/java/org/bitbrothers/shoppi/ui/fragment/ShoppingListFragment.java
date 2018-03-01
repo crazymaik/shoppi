@@ -2,7 +2,6 @@ package org.bitbrothers.shoppi.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,9 +42,6 @@ public class ShoppingListFragment
         listView.setHasFixedSize(true);
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listView.setAdapter(shoppingListAdapter);
-
-        final FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(v -> AddShoppingItemDialogFragment.newInstance().show(getFragmentManager(), null));
 
         return view;
     }
