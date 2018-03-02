@@ -101,6 +101,17 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 });
     }
 
+    public void addShoppingItem(String name) {
+        shoppingItemRepository.create(new ShoppingItem(name))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+
+                }, error -> {
+
+                });
+    }
+
     private void retrieveShoppingItems() {
         shoppingItemRepository.getAll()
                 .subscribeOn(Schedulers.io())
