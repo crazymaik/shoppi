@@ -40,6 +40,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 ContentValues values = new ContentValues();
                 values.put("name", shoppingItem.getName());
                 values.put("bought", shoppingItem.isBought() ? 1 : 0);
+                values.put("category_id", (Long) null);
 
                 id = db.insert("shopping_items", null, values);
 
@@ -67,7 +68,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     public Single<ShoppingItem> get(long id) {
         return Single.create(emitter -> {
             try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought"}, "id = ?", new String[]{"" + id}, null, null, null)) {
+                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought", "category_id"}, "id = ?", new String[]{"" + id}, null, null, null)) {
 
                 if (!cursor.moveToNext()) {
                     emitter.onError(new RuntimeException());
@@ -75,7 +76,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
                 emitter.onSuccess(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")),
                         cursor.getString(cursor.getColumnIndex("name")),
-                        cursor.getInt(cursor.getColumnIndex("bought")) == 1));
+                        cursor.getInt(cursor.getColumnIndex("bought")) == 1,
+                        cursor.getLong(cursor.getColumnIndex("category_id"))));
             }
         });
     }
@@ -84,7 +86,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     public Single<List<ShoppingItem>> getAll() {
         return Single.create(emitter -> {
             try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought"}, null, null, null, null, "name collate nocase asc")) {
+                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought", "category_id"}, null, null, null, null, "name collate nocase asc")) {
                 List<ShoppingItem> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }
@@ -95,7 +97,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     public Single<List<ShoppingItem>> getUnbought() {
         return Single.create(emitter -> {
             try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought"}, "bought = 0", null, null, null, "name collate nocase asc")) {
+                 Cursor cursor = db.query("shopping_items", new String[]{"id", "name", "bought", "category_id"}, "bought = 0", null, null, null, "name collate nocase asc")) {
                 List<ShoppingItem> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }
@@ -157,11 +159,13 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
         int columnId = cursor.getColumnIndex("id");
         int columnName = cursor.getColumnIndex("name");
         int columnBought = cursor.getColumnIndex("bought");
+        int columntCategoryId = cursor.getColumnIndex("category_id");
 
         while (cursor.moveToNext()) {
             items.add(new ShoppingItem(cursor.getLong(columnId),
                     cursor.getString(columnName),
-                    cursor.getInt(columnBought) == 1));
+                    cursor.getInt(columnBought) == 1,
+                    cursor.getLong(columntCategoryId)));
         }
 
         return items;
