@@ -10,6 +10,11 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper {
     }
 
     @Override
+    public void onConfigure(SQLiteDatabase db) {
+        db.setForeignKeyConstraintsEnabled(true);
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table categories (id integer primary key, name text not null, color integer not null);");
         db.execSQL("create table shopping_items (id integer primary key, name text not null, bought integer not null, category_id integer references categories(id) on delete set null);");
