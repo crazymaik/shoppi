@@ -43,7 +43,6 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 values.put("category_id", (Long) null);
 
                 id = db.insert("shopping_items", null, values);
-
             }
 
             emitter.onSuccess(id);
