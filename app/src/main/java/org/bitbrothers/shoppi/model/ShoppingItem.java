@@ -19,12 +19,20 @@ public final class ShoppingItem {
         this.color = 0;
     }
 
+    public ShoppingItem(String name, Category category) {
+        this.id = null;
+        this.name = name;
+        this.bought = false;
+        this.categoryId = category.getId();
+        this.color = category.getColor();
+    }
+
     public ShoppingItem(long id, String name, boolean bought, Long categoryId, Integer color) {
         this.id = id;
         this.name = name;
         this.bought = bought;
         this.categoryId = categoryId;
-        this.color = color != null ? color : 0;
+        this.color = color != null ? color | 0xff000000 : 0;
     }
 
     public Long getId() {
@@ -33,6 +41,14 @@ public final class ShoppingItem {
 
     public String getName() {
         return name;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
     }
 
     public boolean isBought() {
@@ -81,9 +97,5 @@ public final class ShoppingItem {
         result = 31 * result + (categoryId != null ? categoryId.hashCode() : 0);
         result = 31 * result + color;
         return result;
-    }
-
-    public int getColor() {
-        return color;
     }
 }

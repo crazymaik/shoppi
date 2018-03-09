@@ -21,22 +21,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_white_24dp" />
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/add_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:elevation="4dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <Spinner
+            android:id="@+id/add_shopping_item_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <org.bitbrothers.shoppi.ui.widget.BetterEditText
-            android:id="@+id/add_edit"
+            android:id="@+id/add_shopping_item_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_weight="1"
             android:hint="Shopping Item"
             android:imeActionId="@integer/ime_action_done"
             android:imeActionLabel="Add"
@@ -44,14 +49,19 @@
             android:inputType="textCapSentences"
             android:lines="1"
             android:maxLines="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            app:layout_constraintEnd_toStartOf="@id/add_shopping_item_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
 
         <Button
-            android:id="@+id/add_btn"
+            android:id="@+id/add_shopping_item_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Add" />
-    </LinearLayout>
+            android:text="Add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

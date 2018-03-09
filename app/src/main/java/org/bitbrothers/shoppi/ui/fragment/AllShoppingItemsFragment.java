@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
+import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.ui.adapter.AllShoppingItemsAdapter;
+import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
 import org.bitbrothers.shoppi.ui.view.TextWatcherAdapter;
 import org.bitbrothers.shoppi.ui.widget.BetterEditText;
 
@@ -32,7 +35,11 @@ public class AllShoppingItemsFragment
     private static final String KEY_ADD_CONTAINER_VISIBLE = "add_container_visible";
 
     private AllShoppingItemsAdapter shoppingItemsAdapter;
+    private CategoriesSpinnerAdapter categoriesSpinnerAdapter;
     private ViewGroup addShoppingItemContainer;
+    private Spinner addShoppingItemSpinner;
+    private BetterEditText addShoppingItemEditText;
+    private Button addShoppingItemButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,20 +59,25 @@ public class AllShoppingItemsFragment
                 }
             }
         });
+        categoriesSpinnerAdapter = new CategoriesSpinnerAdapter();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_shopping_items, container, false);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
 
         addShoppingItemContainer = view.findViewById(R.id.add_container);
+        addShoppingItemSpinner = view.findViewById(R.id.add_shopping_item_spinner);
+        addShoppingItemEditText = view.findViewById(R.id.add_shopping_item_edit);
+        addShoppingItemButton = view.findViewById(R.id.add_shopping_item_button);
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-        BetterEditText addShoppingItemEditText = view.findViewById(R.id.add_edit);
-        Button addShoppingItemButton = view.findViewById(R.id.add_btn);
+        addShoppingItemSpinner.setAdapter(categoriesSpinnerAdapter);
 
         Runnable addShoppingItemAndReset = () -> {
-            presenter.addShoppingItem(addShoppingItemEditText.getText().toString());
+            Category selectedCategory = (Category) addShoppingItemSpinner.getSelectedItem();
+            String selectedName = addShoppingItemEditText.getText().toString();
+            presenter.addShoppingItem(selectedName, selectedCategory);
             // TODO this should prevent further input and only reset after adding the
             // shopping item actually completed
             addShoppingItemEditText.setText("");
@@ -112,9 +124,7 @@ public class AllShoppingItemsFragment
         });
 
         fab.setOnClickListener(v -> {
-            addShoppingItemEditText.setText("");
-            addShoppingItemContainer.setVisibility(View.VISIBLE);
-            addShoppingItemEditText.requestFocus();
+            presenter.openAddShoppingItemView();
         });
 
         RecyclerView recyclerView = view.findViewById(android.R.id.list);
@@ -148,6 +158,19 @@ public class AllShoppingItemsFragment
     @Override
     public void updateShoppingItem(ShoppingItem shoppingItem) {
         shoppingItemsAdapter.updateShoppingItem(shoppingItem);
+    }
+
+    @Override
+    public void setCategories(List<Category> categories) {
+        categoriesSpinnerAdapter.setCategories(categories);
+    }
+
+    @Override
+    public void showAddShoppingItemView() {
+        addShoppingItemSpinner.setSelection(0);
+        addShoppingItemEditText.setText("");
+        addShoppingItemContainer.setVisibility(View.VISIBLE);
+        addShoppingItemEditText.requestFocus();
     }
 
     @Override

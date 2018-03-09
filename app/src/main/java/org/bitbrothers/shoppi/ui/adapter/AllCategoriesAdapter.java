@@ -54,7 +54,7 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Category category = categories.get(position);
-        holder.colorField.setImageDrawable(new ColorDrawable(category.getColor() | 0xff000000));
+        holder.colorField.setImageDrawable(new ColorDrawable(category.getColor()));
         holder.nameField.setText(category.getName());
     }
 

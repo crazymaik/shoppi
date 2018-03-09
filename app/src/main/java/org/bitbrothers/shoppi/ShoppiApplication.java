@@ -52,7 +52,7 @@ public class ShoppiApplication extends Application {
     }
 
     public AllShoppingItemsPresenter getAllShoppingItemsPresenter() {
-        return new AllShoppingItemsPresenter(shoppingItemRepository);
+        return new AllShoppingItemsPresenter(shoppingItemRepository, categoryRepository);
     }
 
     public MainPresenter getMainPresenter() {

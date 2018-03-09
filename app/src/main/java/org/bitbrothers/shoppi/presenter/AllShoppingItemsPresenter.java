@@ -1,7 +1,9 @@
 package org.bitbrothers.shoppi.presenter;
 
 
+import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
 import java.util.List;
@@ -19,15 +21,21 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
         void showShoppingItems(List<ShoppingItem> shoppingItems);
 
         void updateShoppingItem(ShoppingItem shoppingItem);
+
+        void setCategories(List<Category> categories);
+
+        void showAddShoppingItemView();
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
+    private final CategoryRepository categoryRepository;
     private Disposable onItemAddedDisposable;
     private Disposable onItemRemovedDisposable;
     private Disposable onItemBoughtStateChangedDisposable;
 
-    public AllShoppingItemsPresenter(ShoppingItemRepository shoppingItemRepository) {
+    public AllShoppingItemsPresenter(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -74,6 +82,19 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
         super.detach();
     }
 
+    public void openAddShoppingItemView() {
+        categoryRepository.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(categories -> {
+                    if (view != null) {
+                        view.setCategories(categories);
+                        view.showAddShoppingItemView();
+                    }
+                }, error -> {
+                });
+    }
+
     public void deleteShoppingItem(ShoppingItem shoppingItem) {
         shoppingItemRepository.delete(shoppingItem.getId())
                 .subscribeOn(Schedulers.io())
@@ -101,8 +122,8 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 });
     }
 
-    public void addShoppingItem(String name) {
-        shoppingItemRepository.create(new ShoppingItem(name))
+    public void addShoppingItem(String name, Category category) {
+        shoppingItemRepository.create(new ShoppingItem(name, category))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {

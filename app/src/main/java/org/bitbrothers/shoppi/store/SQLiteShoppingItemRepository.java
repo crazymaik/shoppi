@@ -40,7 +40,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                 ContentValues values = new ContentValues();
                 values.put("name", shoppingItem.getName());
                 values.put("bought", shoppingItem.isBought() ? 1 : 0);
-                values.put("category_id", (Long) null);
+                values.put("category_id", shoppingItem.getCategoryId());
 
                 id = db.insert("shopping_items", null, values);
             }
@@ -163,11 +163,12 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
         int columnColor = cursor.getColumnIndex("color");
 
         while (cursor.moveToNext()) {
+            boolean hasCategory = !cursor.isNull(columnCategoryId);
             items.add(new ShoppingItem(cursor.getLong(columnId),
                     cursor.getString(columnName),
                     cursor.getInt(columnBought) == 1,
-                    cursor.getLong(columnCategoryId),
-                    0));//cursor.getInt(columnColor)));
+                    hasCategory ? cursor.getLong(columnCategoryId) : null,
+                    hasCategory ? cursor.getInt(columnColor) : null));
         }
 
         return items;
