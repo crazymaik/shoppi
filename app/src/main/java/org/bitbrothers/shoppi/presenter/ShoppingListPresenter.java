@@ -2,6 +2,7 @@ package org.bitbrothers.shoppi.presenter;
 
 
 import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
 import java.util.List;
@@ -20,12 +21,15 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     }
 
     private final ShoppingItemRepository shoppingItemRepository;
+    private final CategoryRepository categoryRepository;
     private Disposable onItemAddedDisposable;
     private Disposable onItemRemovedDisposable;
     private Disposable onItemBoughtStateChangedDisposable;
+    private Disposable onCategoryRemovedDisposable;
 
-    public ShoppingListPresenter(ShoppingItemRepository shoppingItemRepository) {
+    public ShoppingListPresenter(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -66,6 +70,15 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
                 }, error -> {
 
                 });
+
+        onCategoryRemovedDisposable = categoryRepository.getOnItemRemovedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+
+                });
     }
 
     @Override
@@ -73,6 +86,7 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
         onItemAddedDisposable.dispose();
         onItemRemovedDisposable.dispose();
         onItemBoughtStateChangedDisposable.dispose();
+        onCategoryRemovedDisposable.dispose();
         super.detach();
     }
 

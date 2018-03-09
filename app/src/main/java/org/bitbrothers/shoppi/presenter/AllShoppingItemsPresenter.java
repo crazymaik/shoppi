@@ -32,6 +32,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
     private Disposable onItemAddedDisposable;
     private Disposable onItemRemovedDisposable;
     private Disposable onItemBoughtStateChangedDisposable;
+    private Disposable onCategoryRemovedDisposable;
 
     public AllShoppingItemsPresenter(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
@@ -72,6 +73,15 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
                 }, error -> {
 
                 });
+
+        onCategoryRemovedDisposable = categoryRepository.getOnItemRemovedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+
+                });
     }
 
     @Override
@@ -79,6 +89,7 @@ public class AllShoppingItemsPresenter extends BasePresenter<AllShoppingItemsPre
         onItemAddedDisposable.dispose();
         onItemRemovedDisposable.dispose();
         onItemBoughtStateChangedDisposable.dispose();
+        onCategoryRemovedDisposable.dispose();
         super.detach();
     }
 
