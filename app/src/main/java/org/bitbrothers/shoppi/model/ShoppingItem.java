@@ -9,19 +9,22 @@ public final class ShoppingItem {
     private final String name;
     private final boolean bought;
     private final Long categoryId;
+    private final int color;
 
     public ShoppingItem(String name) {
         this.id = null;
         this.name = name;
         this.bought = false;
         this.categoryId = null;
+        this.color = 0;
     }
 
-    public ShoppingItem(long id, String name, boolean bought, Long categoryId) {
+    public ShoppingItem(long id, String name, boolean bought, Long categoryId, Integer color) {
         this.id = id;
         this.name = name;
         this.bought = bought;
         this.categoryId = categoryId;
+        this.color = color != null ? color : 0;
     }
 
     public Long getId() {
@@ -37,13 +40,12 @@ public final class ShoppingItem {
     }
 
     public ShoppingItem markBought() {
-        return new ShoppingItem(id, name, true, categoryId);
+        return new ShoppingItem(id, name, true, categoryId, color);
     }
 
     public ShoppingItem markUnbought() {
-        return new ShoppingItem(id, name, false, categoryId);
+        return new ShoppingItem(id, name, false, categoryId, color);
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -57,6 +59,9 @@ public final class ShoppingItem {
         ShoppingItem that = (ShoppingItem) o;
 
         if (bought != that.bought) {
+            return false;
+        }
+        if (color != that.color) {
             return false;
         }
         if (id != null ? !id.equals(that.id) : that.id != null) {
@@ -74,6 +79,7 @@ public final class ShoppingItem {
         result = 31 * result + name.hashCode();
         result = 31 * result + (bought ? 1 : 0);
         result = 31 * result + (categoryId != null ? categoryId.hashCode() : 0);
+        result = 31 * result + color;
         return result;
     }
 }
