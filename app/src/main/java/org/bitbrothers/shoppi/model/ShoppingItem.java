@@ -82,4 +82,8 @@ public final class ShoppingItem {
         result = 31 * result + color;
         return result;
     }
+
+    public int getColor() {
+        return color;
+    }
 }

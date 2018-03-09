@@ -4,17 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="8dp"
+    android:gravity="center"
+    android:orientation="horizontal"
     android:paddingBottom="8dp"
-    android:gravity="center">
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/shopping_item_color"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        tools:src="@android:color/black" />
 
     <TextView
-        android:id="@android:id/text1"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/shopping_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         tools:text="Item" />
 
 </LinearLayout>

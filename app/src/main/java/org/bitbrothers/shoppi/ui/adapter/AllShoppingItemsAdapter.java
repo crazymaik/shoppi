@@ -1,9 +1,11 @@
 package org.bitbrothers.shoppi.ui.adapter;
 
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bitbrothers.shoppi.R;
@@ -24,10 +26,12 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameField;
+        private final ImageView colorField;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.nameField = itemView.findViewById(android.R.id.text1);
+            this.nameField = itemView.findViewById(R.id.shopping_item_name);
+            this.colorField = itemView.findViewById(R.id.shopping_item_color);
 
             itemView.setOnClickListener(v -> {
                 callback.toggleMark(shoppingItems.get(getAdapterPosition()));
@@ -56,6 +60,7 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ShoppingItem shoppingItem = shoppingItems.get(position);
+        holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
         holder.nameField.setText(shoppingItem.getName());
         holder.nameField.setTextAppearance(shoppingItem.isBought() ? R.style.BoughtShoppingItemTextAppearance : R.style.TextAppearance_AppCompat_Medium);
     }
