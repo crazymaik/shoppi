@@ -14,6 +14,7 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
+import org.bitbrothers.shoppi.ui.fragment.AllCategoriesFragment;
 import org.bitbrothers.shoppi.ui.fragment.AllShoppingItemsFragment;
 import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
 
@@ -69,6 +70,8 @@ public class MainActivity
                     return new ShoppingListFragment();
                 case 1:
                     return new AllShoppingItemsFragment();
+                case 2:
+                    return new AllCategoriesFragment();
                 default:
                     throw new IllegalArgumentException();
             }
@@ -81,6 +84,8 @@ public class MainActivity
                     return context.getString(R.string.tab_shopping_list);
                 case 1:
                     return context.getString(R.string.tab_all_items);
+                case 2:
+                    return context.getString(R.string.tab_all_categories);
                 default:
                     throw new IllegalArgumentException();
             }
@@ -88,7 +93,7 @@ public class MainActivity
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     }
 

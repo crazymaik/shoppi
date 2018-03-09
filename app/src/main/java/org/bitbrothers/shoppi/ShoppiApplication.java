@@ -3,10 +3,13 @@ package org.bitbrothers.shoppi;
 import android.app.Application;
 import android.content.Context;
 
+import org.bitbrothers.shoppi.presenter.AllCategoriesPresenter;
 import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
 import org.bitbrothers.shoppi.presenter.ShoppingListPresenter;
+import org.bitbrothers.shoppi.store.CategoryRepository;
+import org.bitbrothers.shoppi.store.SQLiteCategoryRepository;
 import org.bitbrothers.shoppi.store.SQLiteOpenHelper;
 import org.bitbrothers.shoppi.store.SQLiteShoppingItemRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 public class ShoppiApplication extends Application {
 
+    private CategoryRepository categoryRepository;
     private ShoppingItemRepository shoppingItemRepository;
     private Map<String, BasePresenter> presenterCache;
 
@@ -29,6 +33,7 @@ public class ShoppiApplication extends Application {
 
         SQLiteOpenHelper sqliteOpenHelper = new SQLiteOpenHelper(this, "main");
         shoppingItemRepository = new SQLiteShoppingItemRepository(sqliteOpenHelper);
+        categoryRepository = new SQLiteCategoryRepository(sqliteOpenHelper);
 
         presenterCache = new HashMap<>();
     }
@@ -55,5 +60,9 @@ public class ShoppiApplication extends Application {
 
     public ShoppingListPresenter getShoppingListPresenter() {
         return new ShoppingListPresenter(shoppingItemRepository);
+    }
+
+    public AllCategoriesPresenter getAllCategoriesPresenter() {
+        return new AllCategoriesPresenter(categoryRepository);
     }
 }
