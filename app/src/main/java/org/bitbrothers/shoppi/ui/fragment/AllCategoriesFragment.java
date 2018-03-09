@@ -1,6 +1,7 @@
 package org.bitbrothers.shoppi.ui.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,12 +25,22 @@ public class AllCategoriesFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        categoriesAdapter = new AllCategoriesAdapter();
+        categoriesAdapter = new AllCategoriesAdapter(new AllCategoriesAdapter.Callback() {
+            @Override
+            public void deleteCategory(Category category) {
+                presenter.deleteCategory(category);
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_categories, container, false);
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(v -> {
+            AddCategoryDialogFragment.newInstance().show(getFragmentManager(), null);
+        });
 
         RecyclerView recyclerView = view.findViewById(android.R.id.list);
         recyclerView.setHasFixedSize(true);
@@ -47,6 +58,11 @@ public class AllCategoriesFragment
     @Override
     public void showCategories(List<Category> categories) {
         categoriesAdapter.setCategories(categories);
+    }
+
+    @Override
+    public void removeCategory(long id) {
+        categoriesAdapter.removeCategory(id);
     }
 
     @Override

@@ -16,6 +16,11 @@ import java.util.List;
 
 public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdapter.ViewHolder> {
 
+    public interface Callback {
+
+        void deleteCategory(Category category);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView colorField;
@@ -25,12 +30,19 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
             super(itemView);
             this.colorField = itemView.findViewById(R.id.category_item_color);
             this.nameField = itemView.findViewById(R.id.category_item_name);
+
+            itemView.setOnLongClickListener(v -> {
+                callback.deleteCategory(categories.get(getAdapterPosition()));
+                return true;
+            });
         }
     }
 
+    private final Callback callback;
     private List<Category> categories;
 
-    public AllCategoriesAdapter() {
+    public AllCategoriesAdapter(Callback callback) {
+        this.callback = callback;
         this.categories = new ArrayList<>();
     }
 
@@ -54,5 +66,22 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
     public void setCategories(List<Category> categories) {
         this.categories = categories;
         notifyDataSetChanged();
+    }
+
+    public void removeCategory(long id) {
+        int position = findPosition(id);
+        if (position != -1) {
+            categories.remove(position);
+            this.notifyItemRemoved(position);
+        }
+    }
+
+    private int findPosition(long id) {
+        for (int i = 0; i < categories.size(); ++i) {
+            if (categories.get(i).getId() == id) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

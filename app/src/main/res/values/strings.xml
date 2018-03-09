@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Shoppi</string>
+    <string name="add_category_save_error">Saving category failed</string>
     <string name="add_shopping_item_title">Add item</string>
     <string name="add_shopping_item_positive_button">Add</string>
     <string name="add_shopping_item_negative_button">Cancel</string>

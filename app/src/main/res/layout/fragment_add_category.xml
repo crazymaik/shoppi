@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="20dp"
+    tools:context=".ui.fragment.AddCategoryDialogFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/add_category_colors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <org.bitbrothers.shoppi.ui.widget.BetterEditText
+        android:layout_marginTop="8dp"
+        android:id="@+id/add_category_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Category" />
+
+</LinearLayout>
