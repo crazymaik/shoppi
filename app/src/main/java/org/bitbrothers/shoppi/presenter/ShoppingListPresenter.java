@@ -101,7 +101,7 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
     }
 
     private void retrieveShoppingItems() {
-        shoppingItemRepository.getUnbought()
+        shoppingItemRepository.getUnboughtOrderedByCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {

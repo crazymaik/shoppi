@@ -96,10 +96,10 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     }
 
     @Override
-    public Single<List<ShoppingItem>> getUnbought() {
+    public Single<List<ShoppingItem>> getUnboughtOrderedByCategories() {
         return Single.create(emitter -> {
             try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.bought = 0 order by s.name collate nocase asc", null)) {
+                 Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.bought = 0 order by c.name collate nocase asc", null)) {
                 List<ShoppingItem> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }

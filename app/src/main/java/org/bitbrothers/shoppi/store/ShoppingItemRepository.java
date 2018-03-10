@@ -18,7 +18,7 @@ public interface ShoppingItemRepository {
 
     Single<List<ShoppingItem>> getAll();
 
-    Single<List<ShoppingItem>> getUnbought();
+    Single<List<ShoppingItem>> getUnboughtOrderedByCategories();
 
     Single<ShoppingItem> markBought(ShoppingItem shoppingItem);
 
