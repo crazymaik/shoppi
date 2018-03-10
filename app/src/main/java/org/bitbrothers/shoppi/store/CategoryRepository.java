@@ -12,6 +12,8 @@ public interface CategoryRepository {
 
     Single<Category> create(Category category);
 
+    Single<Category> update(Category category);
+
     Completable delete(long id);
 
     Single<Category> get(long id);
@@ -21,6 +23,8 @@ public interface CategoryRepository {
     Single<Integer> getAssignedShoppingItemsCount(long id);
 
     Observable<Category> getOnItemAddedObservable();
+
+    Observable<Category> getOnItemUpdatedObservable();
 
     Observable<Long> getOnItemRemovedObservable();
 }

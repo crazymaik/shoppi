@@ -21,11 +21,13 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     private final SQLiteOpenHelper sqliteOpenHelper;
 
     private final Subject<Category> onItemAddedSubject;
+    private final Subject<Category> onItemUpdatedSubject;
     private final Subject<Long> onItemRemovedSubject;
 
     public SQLiteCategoryRepository(SQLiteOpenHelper sqLiteOpenHelper) {
         this.sqliteOpenHelper = sqLiteOpenHelper;
         this.onItemAddedSubject = PublishSubject.<Category>create().toSerialized();
+        this.onItemUpdatedSubject = PublishSubject.<Category>create().toSerialized();
         this.onItemRemovedSubject = PublishSubject.<Long>create().toSerialized();
     }
 
@@ -44,6 +46,24 @@ public class SQLiteCategoryRepository implements CategoryRepository {
 
             emitter.onSuccess(id);
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemAddedSubject::onNext);
+    }
+
+    @Override
+    public Single<Category> update(Category category) {
+        return Single.create((SingleEmitter<Long> emitter) -> {
+            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
+                ContentValues values = new ContentValues();
+                values.put("name", category.getName());
+                values.put("color", category.getColor());
+
+                int rowCount = db.update("categories", values, "id = ?", new String[]{"" + category.getId()});
+
+                if (rowCount != 1) {
+                    throw new RuntimeException();
+                }
+            }
+            emitter.onSuccess(category.getId());
+        }).flatMap((Long id) -> get(id)).doOnSuccess(onItemUpdatedSubject::onNext);
     }
 
     @Override
@@ -106,6 +126,11 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Observable<Category> getOnItemAddedObservable() {
         return onItemAddedSubject;
+    }
+
+    @Override
+    public Observable<Category> getOnItemUpdatedObservable() {
+        return onItemUpdatedSubject;
     }
 
     @Override

@@ -25,6 +25,7 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
 
     private final CategoryRepository categoryRepository;
     private Disposable onItemAddedDisposable;
+    private Disposable onItemUpdatedDisposable;
     private Disposable onItemRemovedDisposable;
 
     public AllCategoriesPresenter(CategoryRepository categoryRepository) {
@@ -36,6 +37,15 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
         super.attach(view);
 
         onItemAddedDisposable = categoryRepository.getOnItemAddedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveCategories();
+                }, error -> {
+
+                });
+
+        onItemUpdatedDisposable = categoryRepository.getOnItemUpdatedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
@@ -61,6 +71,7 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
     @Override
     public void detach() {
         onItemAddedDisposable.dispose();
+        onItemUpdatedDisposable.dispose();
         onItemRemovedDisposable.dispose();
         super.detach();
     }

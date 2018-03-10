@@ -21,12 +21,18 @@ import org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel;
 
 public class AddCategoryDialogFragment extends AppCompatDialogFragment {
 
+    public static final String KEY_CATEGORY_ID = "category_id";
+
     public static AddCategoryDialogFragment newInstance() {
         return new AddCategoryDialogFragment();
     }
 
     public static AddCategoryDialogFragment newInstance(long categoryId) {
-        return new AddCategoryDialogFragment();
+        Bundle args = new Bundle();
+        args.putLong(KEY_CATEGORY_ID, categoryId);
+        AddCategoryDialogFragment fragment = new AddCategoryDialogFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     private AddCategoryViewModel viewModel;
@@ -58,6 +64,12 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         super.onCreate(savedInstanceState);
         setCancelable(false);
         viewModel = ViewModelProviders.of(this, ShoppiApplication.from(getContext()).getViewModelFactory()).get(AddCategoryViewModel.class);
+
+        if (savedInstanceState == null) {
+            if (getArguments().containsKey(KEY_CATEGORY_ID)) {
+                viewModel.setEditMode(getArguments().getLong(KEY_CATEGORY_ID));
+            }
+        }
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.bitbrothers.shoppi.store.CategoryRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -47,6 +48,8 @@ public class AddCategoryViewModel extends ViewModel {
 
     private final CategoryRepository categoryRepository;
 
+    private Long categoryId;
+
     public AddCategoryViewModel(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
 
@@ -58,13 +61,39 @@ public class AddCategoryViewModel extends ViewModel {
         });
     }
 
+    public void setEditMode(long categoryId) {
+        this.categoryId = categoryId;
+        formFieldsEnabled.set(false);
+        saveButtonEnabled.set(false);
+
+        categoryRepository.get(categoryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(category -> {
+                    categoryName.set(category.getName());
+                    // TODO what to do if not found
+                    selectedColorPosition.set(colorValues.indexOf(category.getColor()));
+                    formFieldsEnabled.set(true);
+                    saveButtonEnabled.set(true);
+                }, error -> {
+                    // TODO
+                });
+    }
+
     public void save() {
         hideSaveErrorMessage();
         formFieldsEnabled.set(false);
         saveButtonEnabled.set(false);
 
-        categoryRepository.create(new Category(categoryName.get(), getSelectedColorValue()))
-                .subscribeOn(Schedulers.io())
+        Single<Category> operation;
+
+        if (categoryId != null) {
+            operation = categoryRepository.update(new Category(categoryId, categoryName.get(), getSelectedColorValue()));
+        } else {
+            operation = categoryRepository.create(new Category(categoryName.get(), getSelectedColorValue()));
+        }
+
+        operation.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(category -> {
                     close.set(true);
@@ -90,4 +119,5 @@ public class AddCategoryViewModel extends ViewModel {
     private void showSaveErrorMessage() {
         saveErrorVisibility.set(View.VISIBLE);
     }
+
 }
