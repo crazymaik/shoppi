@@ -29,6 +29,10 @@ public class AddCategoryDialogFragment
         return new AddCategoryDialogFragment();
     }
 
+    public static AddCategoryDialogFragment newInstance(long categoryId) {
+        return new AddCategoryDialogFragment();
+    }
+
     private CategoryColorsAdapter categoryColorsAdapter;
     private RecyclerView colorsView;
     private BetterEditText nameField;

@@ -1,5 +1,6 @@
 package org.bitbrothers.shoppi.ui.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +19,11 @@ import java.util.List;
 
 public class AllCategoriesFragment
         extends BaseFragment<AllCategoriesPresenter>
-        implements AllCategoriesPresenter.View {
+        implements AllCategoriesPresenter.View, AlertDialogFragment.OnSingleItemSelectedListener, AlertDialogFragment.OnButtonClickListener {
+
+    private static final String TAG_CATEGORY_OPTIONS = "category_options_tag";
+    private static final String KEY_CATEGORY_ID = "category_id";
+    private static final String TAG_PROMPT_DELETE_CATEGORY = "prompt_delete_category_tag";
 
     private AllCategoriesAdapter categoriesAdapter;
 
@@ -27,8 +32,8 @@ public class AllCategoriesFragment
         super.onCreate(savedInstanceState);
         categoriesAdapter = new AllCategoriesAdapter(new AllCategoriesAdapter.Callback() {
             @Override
-            public void deleteCategory(Category category) {
-                presenter.deleteCategory(category);
+            public void onCategoryLongClicked(Category category) {
+                showCategoryOptionsDialog(category);
             }
         });
     }
@@ -53,6 +58,14 @@ public class AllCategoriesFragment
     @Override
     public void onResume() {
         super.onResume();
+        AlertDialogFragment categoryOptionsFragment = (AlertDialogFragment) getFragmentManager().findFragmentByTag(TAG_CATEGORY_OPTIONS);
+        if (categoryOptionsFragment != null) {
+            categoryOptionsFragment.setOnSingleItemSelectedListener(this);
+        }
+        AlertDialogFragment promptDeleteFragment = (AlertDialogFragment) getFragmentManager().findFragmentByTag(TAG_PROMPT_DELETE_CATEGORY);
+        if (promptDeleteFragment != null) {
+            promptDeleteFragment.setOnButtonClickListener(this);
+        }
     }
 
     @Override
@@ -66,7 +79,64 @@ public class AllCategoriesFragment
     }
 
     @Override
+    public void promptDeleteCategory(long categoryId, int itemCount) {
+        AlertDialogFragment.Builder builder = new AlertDialogFragment.Builder(getActivity());
+        builder.setMessage(getContext().getResources().getQuantityString(R.plurals.prompt_category_delete, itemCount, itemCount));
+        builder.setPositiveButton("Yes");
+        builder.setNegativeButton("Cancel");
+        AlertDialogFragment fragment = builder.create();
+        fragment.setOnButtonClickListener(this);
+        fragment.show(getFragmentManager(), TAG_PROMPT_DELETE_CATEGORY);
+    }
+
+    @Override
     protected AllCategoriesPresenter createPresenter() {
         return ShoppiApplication.from(getContext()).getAllCategoriesPresenter();
+    }
+
+    @Override
+    public void onSingleItemSelected(Bundle custom, int itemPosition) {
+        long categoryId = custom.getLong(KEY_CATEGORY_ID);
+
+        switch (itemPosition) {
+            case 0:
+                AddCategoryDialogFragment.newInstance(categoryId).show(getFragmentManager(), null);
+                break;
+            case 1:
+                presenter.safeDeleteCategory(categoryId);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void onButtonClick(AlertDialogFragment fragment, int whichButton) {
+        switch (whichButton) {
+            case AlertDialog.BUTTON_POSITIVE:
+                long categoryId = fragment.getCustomBundle().getLong(KEY_CATEGORY_ID);
+                presenter.deleteCategory(categoryId);
+                break;
+            case AlertDialog.BUTTON_NEGATIVE:
+                fragment.dismiss();
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    private void showCategoryOptionsDialog(Category category) {
+        Bundle customBundle = new Bundle();
+        customBundle.putLong(KEY_CATEGORY_ID, category.getId());
+        AlertDialogFragment.Builder builder = new AlertDialogFragment.Builder(getActivity());
+
+        builder.setCancelable(true);
+        builder.setTitle(category.getName());
+        builder.setItems(R.array.category_options);
+        builder.setCustom(customBundle);
+
+        AlertDialogFragment fragment = builder.create();
+        fragment.setOnSingleItemSelectedListener(this);
+        fragment.show(getFragmentManager(), TAG_CATEGORY_OPTIONS);
     }
 }

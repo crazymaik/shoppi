@@ -89,6 +89,21 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     }
 
     @Override
+    public Single<Integer> getAssignedShoppingItemsCount(long categoryId) {
+        return Single.create(emitter -> {
+            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+                 Cursor cursor = db.query("shopping_items", new String[]{"count(*)"}, "category_id = ?", new String[]{"" + categoryId}, null, null, null)) {
+
+                if (!cursor.moveToNext()) {
+                    emitter.onError(new RuntimeException());
+                }
+
+                emitter.onSuccess(cursor.getInt(0));
+            }
+        });
+    }
+
+    @Override
     public Observable<Category> getOnItemAddedObservable() {
         return onItemAddedSubject;
     }

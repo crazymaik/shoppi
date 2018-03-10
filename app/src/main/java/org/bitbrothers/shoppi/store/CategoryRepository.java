@@ -18,6 +18,8 @@ public interface CategoryRepository {
 
     Single<List<Category>> getAll();
 
+    Single<Integer> getAssignedShoppingItemsCount(long id);
+
     Observable<Category> getOnItemAddedObservable();
 
     Observable<Long> getOnItemRemovedObservable();

@@ -19,6 +19,8 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
         void showCategories(List<Category> categories);
 
         void removeCategory(long id);
+
+        void promptDeleteCategory(long categoryId, int itemCount);
     }
 
     private final CategoryRepository categoryRepository;
@@ -63,8 +65,24 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
         super.detach();
     }
 
-    public void deleteCategory(Category category) {
-        categoryRepository.delete(category.getId())
+    public void safeDeleteCategory(long categoryId) {
+        categoryRepository.getAssignedShoppingItemsCount(categoryId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(itemCount -> {
+                    if (itemCount == 0) {
+                        deleteCategory(categoryId);
+                    } else {
+                        if (view != null) {
+                            view.promptDeleteCategory(categoryId, itemCount);
+                        }
+                    }
+                }, error -> {
+                });
+    }
+
+    public void deleteCategory(long categoryId) {
+        categoryRepository.delete(categoryId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {

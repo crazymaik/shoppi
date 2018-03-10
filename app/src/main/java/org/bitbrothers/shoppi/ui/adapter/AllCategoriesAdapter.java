@@ -18,7 +18,7 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
 
     public interface Callback {
 
-        void deleteCategory(Category category);
+        void onCategoryLongClicked(Category category);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -32,7 +32,7 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
             this.nameField = itemView.findViewById(R.id.category_item_name);
 
             itemView.setOnLongClickListener(v -> {
-                callback.deleteCategory(categories.get(getAdapterPosition()));
+                callback.onCategoryLongClicked(categories.get(getAdapterPosition()));
                 return true;
             });
         }
