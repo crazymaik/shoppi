@@ -59,6 +59,13 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         }
     };
 
+    private final Observable.OnPropertyChangedCallback selectedColorPositionPropertyChanged = new Observable.OnPropertyChangedCallback() {
+        @Override
+        public void onPropertyChanged(Observable observable, int i) {
+            categoryColorsAdapter.setSelectedColorPosition(viewModel.selectedColorPosition.get());
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +73,7 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         viewModel = ViewModelProviders.of(this, ShoppiApplication.from(getContext()).getViewModelFactory()).get(AddCategoryViewModel.class);
 
         if (savedInstanceState == null) {
-            if (getArguments().containsKey(KEY_CATEGORY_ID)) {
+            if (getArguments() != null && getArguments().containsKey(KEY_CATEGORY_ID)) {
                 viewModel.setEditMode(getArguments().getLong(KEY_CATEGORY_ID));
             }
         }
@@ -107,6 +114,7 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         negativeButton = d.getButton(AlertDialog.BUTTON_NEGATIVE);
         negativeButton.setOnClickListener(v -> viewModel.cancel());
 
+        viewModel.selectedColorPosition.addOnPropertyChangedCallback(selectedColorPositionPropertyChanged);
         viewModel.saveButtonEnabled.addOnPropertyChangedCallback(saveButtonEnabledPropertyChanged);
         viewModel.close.addOnPropertyChangedCallback(closePropertyChanged);
 
@@ -117,8 +125,9 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
 
     @Override
     public void onStop() {
-        viewModel.close.removeOnPropertyChangedCallback(closePropertyChanged);
+        viewModel.selectedColorPosition.removeOnPropertyChangedCallback(selectedColorPositionPropertyChanged);
         viewModel.saveButtonEnabled.removeOnPropertyChangedCallback(saveButtonEnabledPropertyChanged);
+        viewModel.close.removeOnPropertyChangedCallback(closePropertyChanged);
         super.onStop();
     }
 

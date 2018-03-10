@@ -48,7 +48,7 @@ public class CategoryColorsAdapter extends RecyclerView.Adapter<CategoryColorsAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.imageView.setImageDrawable(new ColorDrawable(0xff000000 | colors.get(position)));
+        holder.imageView.setImageDrawable(new ColorDrawable(colors.get(position)));
         holder.itemView.setSelected(position == selectedPosition);
     }
 
@@ -65,6 +65,7 @@ public class CategoryColorsAdapter extends RecyclerView.Adapter<CategoryColorsAd
     public void setSelectedColorPosition(int position) {
         if (this.selectedPosition != position) {
             this.selectedPosition = position;
+            notifyDataSetChanged();
         }
     }
 

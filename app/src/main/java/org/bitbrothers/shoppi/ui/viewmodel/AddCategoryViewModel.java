@@ -24,18 +24,18 @@ public class AddCategoryViewModel extends ViewModel {
     public final ObservableInt selectedColorPosition = new ObservableInt(0);
 
     public final List<Integer> colorValues = new ArrayList<Integer>() {{
-        add(0xDC0D0D);
-        add(0xDC6318);
-        add(0xDCD61A);
-        add(0x7BDC1A);
-        add(0x1ADC61);
-        add(0x18DCD2);
-        add(0x188BDC);
-        add(0x1644DC);
-        add(0x7718DC);
-        add(0xD618DC);
-        add(0xDC1898);
-        add(0xDC185D);
+        add(0xFFDC0D0D);
+        add(0xFFDC6318);
+        add(0xFFDCD61A);
+        add(0xFF7BDC1A);
+        add(0xFF1ADC61);
+        add(0xFF18DCD2);
+        add(0xFF188BDC);
+        add(0xFF1644DC);
+        add(0xFF7718DC);
+        add(0xFFD618DC);
+        add(0xFFDC1898);
+        add(0xFFDC185D);
     }};
 
     public final ObservableField<String> categoryName = new ObservableField<>("");

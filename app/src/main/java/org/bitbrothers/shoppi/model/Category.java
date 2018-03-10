@@ -9,13 +9,13 @@ public final class Category {
     public Category(String name, int color) {
         this.id = null;
         this.name = name;
-        this.color = color | 0xff000000;
+        this.color = color;
     }
 
     public Category(Long id, String name, int color) {
         this.id = id;
         this.name = name;
-        this.color = color | 0xff000000;
+        this.color = color;
     }
 
     public Long getId() {
