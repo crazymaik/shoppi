@@ -60,7 +60,11 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ShoppingItem shoppingItem = shoppingItems.get(position);
-        holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
+        if (shoppingItem.getColor() != null) {
+            holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
+        } else {
+            holder.colorField.setImageResource(R.drawable.unknown_category);
+        }
         holder.nameField.setText(shoppingItem.getName());
         holder.nameField.setTextAppearance(shoppingItem.isBought() ? R.style.BoughtShoppingItemTextAppearance : R.style.TextAppearance_AppCompat_Medium);
     }

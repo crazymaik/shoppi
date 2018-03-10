@@ -73,11 +73,13 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
                     emitter.onError(new RuntimeException());
                 }
 
+                int columnColor = cursor.getColumnIndex("color");
+
                 emitter.onSuccess(new ShoppingItem(cursor.getLong(cursor.getColumnIndex("id")),
                         cursor.getString(cursor.getColumnIndex("name")),
                         cursor.getInt(cursor.getColumnIndex("bought")) == 1,
                         cursor.getLong(cursor.getColumnIndex("category_id")),
-                        cursor.getInt(cursor.getColumnIndex("color"))));
+                        cursor.isNull(columnColor) ? null : cursor.getInt(columnColor)));
             }
         });
     }

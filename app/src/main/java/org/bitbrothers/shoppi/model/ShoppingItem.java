@@ -9,7 +9,7 @@ public final class ShoppingItem {
     private final String name;
     private final boolean bought;
     private final Long categoryId;
-    private final int color;
+    private final Integer color;
 
     public ShoppingItem(String name) {
         this.id = null;
@@ -32,7 +32,7 @@ public final class ShoppingItem {
         this.name = name;
         this.bought = bought;
         this.categoryId = categoryId;
-        this.color = color != null ? color | 0xff000000 : 0;
+        this.color = color != null ? color | 0xff000000 : null;
     }
 
     public Long getId() {
@@ -43,7 +43,7 @@ public final class ShoppingItem {
         return name;
     }
 
-    public int getColor() {
+    public Integer getColor() {
         return color;
     }
 
