@@ -17,7 +17,7 @@ public class CategoryColorsAdapter extends RecyclerView.Adapter<CategoryColorsAd
 
     public interface Callback {
 
-        void onColorSelected(int color);
+        void onColorSelected(int position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,13 +63,17 @@ public class CategoryColorsAdapter extends RecyclerView.Adapter<CategoryColorsAd
     }
 
     public void setSelectedColorPosition(int position) {
-        this.selectedPosition = position;
+        if (this.selectedPosition != position) {
+            this.selectedPosition = position;
+        }
     }
 
     private void switchSelectedTo(int position) {
-        notifyItemChanged(selectedPosition);
-        selectedPosition = position;
-        notifyItemChanged(position);
-        callback.onColorSelected(colors.get(position));
+        if (position != selectedPosition) {
+            notifyItemChanged(selectedPosition);
+            selectedPosition = position;
+            notifyItemChanged(position);
+            callback.onColorSelected(selectedPosition);
+        }
     }
 }

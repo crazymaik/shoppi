@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingEnd="24dp"
-    android:paddingStart="24dp"
-    android:paddingTop="20dp"
-    tools:context=".ui.fragment.AddCategoryDialogFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/add_category_colors"
+    <data>
+
+        <variable
+            name="vm"
+            type="org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel" />
+    </data>
+
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:paddingTop="20dp"
+        tools:context=".ui.fragment.AddCategoryDialogFragment">
 
-    <org.bitbrothers.shoppi.ui.widget.BetterEditText
-        android:id="@+id/add_category_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Category"
-        android:inputType="textCapWords"
-        android:lines="1"
-        android:maxLines="1"
-        android:singleLine="true" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/add_category_colors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="@{vm.formFieldsEnabled}" />
 
-</LinearLayout>
+        <org.bitbrothers.shoppi.ui.widget.BetterEditText
+            android:id="@+id/add_category_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:enabled="@{vm.formFieldsEnabled}"
+            android:hint="Category"
+            android:inputType="textCapWords"
+            android:lines="1"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@={vm.categoryName}" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/add_category_save_error"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="@{vm.saveErrorVisibility}" />
+    </LinearLayout>
+</layout>

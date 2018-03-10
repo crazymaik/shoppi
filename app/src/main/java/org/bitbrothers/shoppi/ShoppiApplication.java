@@ -3,7 +3,6 @@ package org.bitbrothers.shoppi;
 import android.app.Application;
 import android.content.Context;
 
-import org.bitbrothers.shoppi.presenter.AddCategoryPresenter;
 import org.bitbrothers.shoppi.presenter.AllCategoriesPresenter;
 import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
@@ -14,6 +13,7 @@ import org.bitbrothers.shoppi.store.SQLiteCategoryRepository;
 import org.bitbrothers.shoppi.store.SQLiteOpenHelper;
 import org.bitbrothers.shoppi.store.SQLiteShoppingItemRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
+import org.bitbrothers.shoppi.ui.DependencyAwareViewModelFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,7 @@ public class ShoppiApplication extends Application {
 
     private CategoryRepository categoryRepository;
     private ShoppingItemRepository shoppingItemRepository;
+    private DependencyAwareViewModelFactory viewModelFactory;
     private Map<String, BasePresenter> presenterCache;
 
     public static ShoppiApplication from(Context context) {
@@ -36,11 +37,21 @@ public class ShoppiApplication extends Application {
         shoppingItemRepository = new SQLiteShoppingItemRepository(sqliteOpenHelper);
         categoryRepository = new SQLiteCategoryRepository(sqliteOpenHelper);
 
+        viewModelFactory = new DependencyAwareViewModelFactory(this);
+
         presenterCache = new HashMap<>();
     }
 
     public ShoppingItemRepository getShoppingItemRepository() {
         return shoppingItemRepository;
+    }
+
+    public CategoryRepository getCategoryRepository() {
+        return categoryRepository;
+    }
+
+    public DependencyAwareViewModelFactory getViewModelFactory() {
+        return viewModelFactory;
     }
 
     public <T extends BasePresenter> T getPresenterFromCache(String cacheKey) {
@@ -65,9 +76,5 @@ public class ShoppiApplication extends Application {
 
     public AllCategoriesPresenter getAllCategoriesPresenter() {
         return new AllCategoriesPresenter(categoryRepository);
-    }
-
-    public AddCategoryPresenter getAddCategoryPresenter() {
-        return new AddCategoryPresenter(categoryRepository);
     }
 }
