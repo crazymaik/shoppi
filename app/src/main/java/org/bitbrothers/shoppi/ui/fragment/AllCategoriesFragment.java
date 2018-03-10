@@ -84,6 +84,9 @@ public class AllCategoriesFragment
         builder.setMessage(getContext().getResources().getQuantityString(R.plurals.prompt_category_delete, itemCount, itemCount));
         builder.setPositiveButton("Yes");
         builder.setNegativeButton("Cancel");
+        Bundle customBundle = new Bundle();
+        customBundle.putLong(KEY_CATEGORY_ID, categoryId);
+        builder.setCustom(customBundle);
         AlertDialogFragment fragment = builder.create();
         fragment.setOnButtonClickListener(this);
         fragment.show(getFragmentManager(), TAG_PROMPT_DELETE_CATEGORY);
@@ -116,6 +119,7 @@ public class AllCategoriesFragment
             case AlertDialog.BUTTON_POSITIVE:
                 long categoryId = fragment.getCustomBundle().getLong(KEY_CATEGORY_ID);
                 presenter.deleteCategory(categoryId);
+                fragment.dismiss();
                 break;
             case AlertDialog.BUTTON_NEGATIVE:
                 fragment.dismiss();
