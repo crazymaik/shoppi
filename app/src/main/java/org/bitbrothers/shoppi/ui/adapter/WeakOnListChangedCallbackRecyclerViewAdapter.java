@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 
-public class WeakOnListChangedCallback extends ObservableList.OnListChangedCallback<ObservableList> {
+public class WeakOnListChangedCallbackRecyclerViewAdapter extends ObservableList.OnListChangedCallback<ObservableList> {
 
     private final WeakReference<RecyclerView.Adapter> adapter;
 
-    public WeakOnListChangedCallback(RecyclerView.Adapter<?> adapter) {
+    public WeakOnListChangedCallbackRecyclerViewAdapter(RecyclerView.Adapter<?> adapter) {
         this.adapter = new WeakReference<>(adapter);
     }
 

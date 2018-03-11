@@ -26,8 +26,8 @@ import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.ui.adapter.AllShoppingItemsAdapter;
 import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
-import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallback;
 import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackBaseAdapter;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAdapter;
 import org.bitbrothers.shoppi.ui.view.TextWatcherAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel;
 import org.bitbrothers.shoppi.ui.widget.BetterEditText;
@@ -87,7 +87,7 @@ public class AllShoppingItemsFragment
         });
 
         shoppingItemsAdapter.setShoppingItems(viewModel.shoppingItems);
-        viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallback(shoppingItemsAdapter));
+        viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallbackRecyclerViewAdapter(shoppingItemsAdapter));
 
         categoriesSpinnerAdapter = new CategoriesSpinnerAdapter();
         categoriesSpinnerAdapter.setCategories(viewModel.categories);

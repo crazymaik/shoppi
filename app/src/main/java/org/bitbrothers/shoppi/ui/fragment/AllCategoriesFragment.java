@@ -15,7 +15,7 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.ui.adapter.AllCategoriesAdapter;
-import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallback;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AllCategoriesViewModel;
 
 public class AllCategoriesFragment
@@ -52,7 +52,7 @@ public class AllCategoriesFragment
         });
 
         categoriesAdapter.setCategories(viewModel.categories);
-        viewModel.categories.addOnListChangedCallback(new WeakOnListChangedCallback(categoriesAdapter));
+        viewModel.categories.addOnListChangedCallback(new WeakOnListChangedCallbackRecyclerViewAdapter(categoriesAdapter));
 
         RecyclerView recyclerView = view.findViewById(android.R.id.list);
         recyclerView.setHasFixedSize(true);

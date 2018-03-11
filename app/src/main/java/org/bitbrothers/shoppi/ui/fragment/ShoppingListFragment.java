@@ -14,7 +14,7 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.ui.adapter.ShoppingListAdapter;
-import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallback;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.ShoppingListViewModel;
 
 public class ShoppingListFragment extends Fragment {
@@ -40,7 +40,7 @@ public class ShoppingListFragment extends Fragment {
             }
         });
 
-        viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallback(shoppingListAdapter));
+        viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallbackRecyclerViewAdapter(shoppingListAdapter));
         shoppingListAdapter.setShoppingItems(viewModel.shoppingItems);
 
         RecyclerView listView = view.findViewById(android.R.id.list);
