@@ -1,10 +1,17 @@
 <resources>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="yes">Yes</string>
     <string name="app_name">Shoppi</string>
+    <string name="add_category_edittext_hint">Category</string>
     <string name="add_category_save_error">Saving category failed</string>
-    <string name="add_shopping_item_title">Add item</string>
-    <string name="add_shopping_item_positive_button">Add</string>
+    <string name="add_category_title">Add Category</string>
+    <string name="add_shopping_item_edittext_hint">Shopping Item</string>
     <string name="add_shopping_item_negative_button">Cancel</string>
+    <string name="add_shopping_item_positive_button">Add</string>
     <string name="add_shopping_item_save_error">Saving shopping item failed</string>
+    <string name="add_shopping_item_title">Add item</string>
     <string name="tab_all_categories">Categories</string>
     <string name="tab_all_items">All Items</string>
     <string name="tab_shopping_list">Shopping List</string>

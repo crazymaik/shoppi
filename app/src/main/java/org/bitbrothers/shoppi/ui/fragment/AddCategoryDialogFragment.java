@@ -85,9 +85,9 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         FragmentAddCategoryBinding binding = FragmentAddCategoryBinding.inflate(getActivity().getLayoutInflater());
         View rootView = binding.getRoot();
 
-        builder.setTitle("Add Category");
-        builder.setPositiveButton("Save", null);
-        builder.setNegativeButton("Cancel", null);
+        builder.setTitle(R.string.add_category_title);
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, null);
         builder.setView(rootView);
 
         categoryColorsAdapter = new CategoryColorsAdapter(position -> viewModel.selectedColorPosition.set(position));

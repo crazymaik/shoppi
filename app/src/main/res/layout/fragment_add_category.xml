@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:enabled="@{vm.formFieldsEnabled}"
-            android:hint="Category"
+            android:hint="@string/add_category_edittext_hint"
             android:inputType="textCapWords"
             android:lines="1"
             android:maxLines="1"
