@@ -8,19 +8,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.bitbrothers.shoppi.R;
-import org.bitbrothers.shoppi.ShoppiApplication;
-import org.bitbrothers.shoppi.presenter.BasePresenter;
-import org.bitbrothers.shoppi.presenter.MainPresenter;
 import org.bitbrothers.shoppi.ui.fragment.AllCategoriesFragment;
 import org.bitbrothers.shoppi.ui.fragment.AllShoppingItemsFragment;
 import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
 
-public class MainActivity
-        extends BaseAppCompatActivity
-        implements MainPresenter.View {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +43,6 @@ public class MainActivity
 
         TabLayout tabLayout = findViewById(R.id.pager_tabs);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    @Override
-    protected BasePresenter createPresenter() {
-        return ShoppiApplication.from(this).getMainPresenter();
     }
 
     private static class PagerAdapter extends FragmentPagerAdapter {
