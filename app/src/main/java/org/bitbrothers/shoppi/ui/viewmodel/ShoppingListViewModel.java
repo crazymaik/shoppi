@@ -1,45 +1,35 @@
-package org.bitbrothers.shoppi.presenter;
+package org.bitbrothers.shoppi.ui.viewmodel;
 
+import android.arch.lifecycle.ViewModel;
+import android.databinding.ObservableArrayList;
 
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
-import java.util.List;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.View> {
+public class ShoppingListViewModel extends ViewModel {
 
-    public interface View extends BasePresenter.BaseView {
-
-        void showShoppingItems(List<ShoppingItem> shoppingItems);
-
-        void removeShoppingItem(long id);
-    }
+    public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
 
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
-    private Disposable onItemAddedDisposable;
-    private Disposable onItemRemovedDisposable;
-    private Disposable onItemBoughtStateChangedDisposable;
+    private Disposable onShoppingItemAddedDisposable;
+    private Disposable onShoppingItemRemovedDisposable;
+    private Disposable onShoppingItemBoughtStateChangedDisposable;
     private Disposable onCategoryUpdatedDisposable;
     private Disposable onCategoryRemovedDisposable;
 
-    public ShoppingListPresenter(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+    public ShoppingListViewModel(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         this.shoppingItemRepository = shoppingItemRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
-    public void attach(View view) {
-        super.attach(view);
-
-        retrieveShoppingItems();
-
-        onItemAddedDisposable = shoppingItemRepository.getOnItemAddedObservable()
+    public void attach() {
+        onShoppingItemAddedDisposable = shoppingItemRepository.getOnItemAddedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
@@ -48,23 +38,21 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
 
                 });
 
-        onItemRemovedDisposable = shoppingItemRepository.getOnItemRemovedObservable()
+        onShoppingItemRemovedDisposable = shoppingItemRepository.getOnItemRemovedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(id -> {
-                    if (view != null) {
-                        view.removeShoppingItem(id);
-                    }
+                    removeShoppingItem(id);
                 }, error -> {
 
                 });
 
-        onItemBoughtStateChangedDisposable = shoppingItemRepository.getOnItemBoughtStateChangedObservable()
+        onShoppingItemBoughtStateChangedDisposable = shoppingItemRepository.getOnItemBoughtStateChangedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     if (shoppingItem.isBought()) {
-                        view.removeShoppingItem(shoppingItem.getId());
+                        removeShoppingItem(shoppingItem.getId());
                     } else {
                         retrieveShoppingItems();
                     }
@@ -89,16 +77,16 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
                 }, error -> {
 
                 });
+
+        retrieveShoppingItems();
     }
 
-    @Override
     public void detach() {
-        onItemAddedDisposable.dispose();
-        onItemRemovedDisposable.dispose();
-        onItemBoughtStateChangedDisposable.dispose();
+        onShoppingItemAddedDisposable.dispose();
+        onShoppingItemRemovedDisposable.dispose();
+        onShoppingItemBoughtStateChangedDisposable.dispose();
         onCategoryUpdatedDisposable.dispose();
         onCategoryRemovedDisposable.dispose();
-        super.detach();
     }
 
     public void markBought(ShoppingItem shoppingItem) {
@@ -116,12 +104,20 @@ public class ShoppingListPresenter extends BasePresenter<ShoppingListPresenter.V
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
-                    if (view != null) {
-                        view.showShoppingItems(shoppingItems);
-                    }
+                    this.shoppingItems.clear();
+                    this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
                     // TODO
                 });
-
     }
+
+    private void removeShoppingItem(long id) {
+        for (int i = 0; i < shoppingItems.size(); ++i) {
+            if (shoppingItems.get(i).getId() == id) {
+                shoppingItems.remove(i);
+                break;
+            }
+        }
+    }
+
 }
