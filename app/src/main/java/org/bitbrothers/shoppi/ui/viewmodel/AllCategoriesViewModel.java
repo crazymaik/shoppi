@@ -1,6 +1,5 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
-import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableArrayList;
 import android.util.Log;
 
@@ -8,10 +7,9 @@ import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class AllCategoriesViewModel extends ViewModel {
+public class AllCategoriesViewModel extends BaseViewModel {
 
     public interface View {
 
@@ -22,36 +20,34 @@ public class AllCategoriesViewModel extends ViewModel {
 
     private final CategoryRepository categoryRepository;
     private View view;
-    private Disposable onItemAddedDisposable;
-    private Disposable onItemUpdatedDisposable;
-    private Disposable onItemRemovedDisposable;
 
     public AllCategoriesViewModel(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     public void attach(View view) {
+        super.attach();
         this.view = view;
 
-        onItemAddedDisposable = categoryRepository.getOnItemAddedObservable()
+        addViewDisposable(categoryRepository.getOnItemAddedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
 
-                });
+                }));
 
-        onItemUpdatedDisposable = categoryRepository.getOnItemUpdatedObservable()
+        addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
 
-                });
+                }));
 
-        onItemRemovedDisposable = categoryRepository.getOnItemRemovedObservable()
+        addViewDisposable(categoryRepository.getOnItemRemovedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(id -> {
@@ -63,15 +59,9 @@ public class AllCategoriesViewModel extends ViewModel {
                     }
                 }, error -> {
 
-                });
+                }));
 
         retrieveCategories();
-    }
-
-    public void detach() {
-        onItemAddedDisposable.dispose();
-        onItemUpdatedDisposable.dispose();
-        onItemRemovedDisposable.dispose();
     }
 
     private void retrieveCategories() {
