@@ -1,40 +1,37 @@
-package org.bitbrothers.shoppi.presenter;
+package org.bitbrothers.shoppi.ui.viewmodel;
 
-
+import android.arch.lifecycle.ViewModel;
+import android.databinding.ObservableArrayList;
 import android.util.Log;
 
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 
-import java.util.List;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter.View> {
+public class AllCategoriesViewModel extends ViewModel {
 
-    public interface View extends BasePresenter.BaseView {
-
-        void showCategories(List<Category> categories);
-
-        void removeCategory(long id);
+    public interface View {
 
         void promptDeleteCategory(long categoryId, int itemCount);
     }
 
+    public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
+
     private final CategoryRepository categoryRepository;
+    private View view;
     private Disposable onItemAddedDisposable;
     private Disposable onItemUpdatedDisposable;
     private Disposable onItemRemovedDisposable;
 
-    public AllCategoriesPresenter(CategoryRepository categoryRepository) {
+    public AllCategoriesViewModel(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
     public void attach(View view) {
-        super.attach(view);
+        this.view = view;
 
         onItemAddedDisposable = categoryRepository.getOnItemAddedObservable()
                 .subscribeOn(Schedulers.io())
@@ -58,8 +55,11 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(id -> {
-                    if (view != null) {
-                        view.removeCategory(id);
+                    for (int i = 0; i < categories.size(); ++i) {
+                        if (categories.get(i).getId() == id) {
+                            categories.remove(i);
+                            break;
+                        }
                     }
                 }, error -> {
 
@@ -68,12 +68,22 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
         retrieveCategories();
     }
 
-    @Override
     public void detach() {
         onItemAddedDisposable.dispose();
         onItemUpdatedDisposable.dispose();
         onItemRemovedDisposable.dispose();
-        super.detach();
+    }
+
+    private void retrieveCategories() {
+        categoryRepository.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(categories -> {
+                    this.categories.clear();
+                    this.categories.addAll(categories);
+                }, error -> {
+                    Log.e("AllCategoriesPresenter", "Retrieving categories failed", error);
+                });
     }
 
     public void safeDeleteCategory(long categoryId) {
@@ -98,19 +108,6 @@ public class AllCategoriesPresenter extends BasePresenter<AllCategoriesPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                 }, error -> {
-                });
-    }
-
-    private void retrieveCategories() {
-        categoryRepository.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(categories -> {
-                    if (view != null) {
-                        view.showCategories(categories);
-                    }
-                }, error -> {
-                    Log.e("AllCategoriesPresenter", "Retrieving categories failed", error);
                 });
     }
 }

@@ -3,7 +3,6 @@ package org.bitbrothers.shoppi;
 import android.app.Application;
 import android.content.Context;
 
-import org.bitbrothers.shoppi.presenter.AllCategoriesPresenter;
 import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.presenter.BasePresenter;
 import org.bitbrothers.shoppi.presenter.MainPresenter;
@@ -72,9 +71,5 @@ public class ShoppiApplication extends Application {
 
     public ShoppingListPresenter getShoppingListPresenter() {
         return new ShoppingListPresenter(shoppingItemRepository, categoryRepository);
-    }
-
-    public AllCategoriesPresenter getAllCategoriesPresenter() {
-        return new AllCategoriesPresenter(categoryRepository);
     }
 }

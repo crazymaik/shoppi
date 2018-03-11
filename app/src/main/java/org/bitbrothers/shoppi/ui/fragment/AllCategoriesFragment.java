@@ -1,8 +1,10 @@
 package org.bitbrothers.shoppi.ui.fragment;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,30 +14,25 @@ import android.view.ViewGroup;
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.model.Category;
-import org.bitbrothers.shoppi.presenter.AllCategoriesPresenter;
 import org.bitbrothers.shoppi.ui.adapter.AllCategoriesAdapter;
-
-import java.util.List;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallback;
+import org.bitbrothers.shoppi.ui.viewmodel.AllCategoriesViewModel;
 
 public class AllCategoriesFragment
-        extends BaseFragment<AllCategoriesPresenter>
-        implements AllCategoriesPresenter.View, AlertDialogFragment.OnSingleItemSelectedListener, AlertDialogFragment.OnButtonClickListener {
+        extends Fragment
+        implements AllCategoriesViewModel.View, AlertDialogFragment.OnSingleItemSelectedListener, AlertDialogFragment.OnButtonClickListener {
 
     private static final String TAG_CATEGORY_OPTIONS = "category_options_tag";
     private static final String KEY_CATEGORY_ID = "category_id";
     private static final String TAG_PROMPT_DELETE_CATEGORY = "prompt_delete_category_tag";
 
     private AllCategoriesAdapter categoriesAdapter;
+    private AllCategoriesViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        categoriesAdapter = new AllCategoriesAdapter(new AllCategoriesAdapter.Callback() {
-            @Override
-            public void onCategoryLongClicked(Category category) {
-                showCategoryOptionsDialog(category);
-            }
-        });
+        viewModel = ViewModelProviders.of(this, ShoppiApplication.from(getContext()).getViewModelFactory()).get(AllCategoriesViewModel.class);
     }
 
     @Override
@@ -47,12 +44,28 @@ public class AllCategoriesFragment
             AddCategoryDialogFragment.newInstance().show(getFragmentManager(), null);
         });
 
+        categoriesAdapter = new AllCategoriesAdapter(new AllCategoriesAdapter.Callback() {
+            @Override
+            public void onCategoryLongClicked(Category category) {
+                showCategoryOptionsDialog(category);
+            }
+        });
+
+        categoriesAdapter.setCategories(viewModel.categories);
+        viewModel.categories.addOnListChangedCallback(new WeakOnListChangedCallback(categoriesAdapter));
+
         RecyclerView recyclerView = view.findViewById(android.R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(categoriesAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        viewModel.attach(this);
     }
 
     @Override
@@ -69,13 +82,9 @@ public class AllCategoriesFragment
     }
 
     @Override
-    public void showCategories(List<Category> categories) {
-        categoriesAdapter.setCategories(categories);
-    }
-
-    @Override
-    public void removeCategory(long id) {
-        categoriesAdapter.removeCategory(id);
+    public void onStop() {
+        viewModel.detach();
+        super.onStop();
     }
 
     @Override
@@ -93,11 +102,6 @@ public class AllCategoriesFragment
     }
 
     @Override
-    protected AllCategoriesPresenter createPresenter() {
-        return ShoppiApplication.from(getContext()).getAllCategoriesPresenter();
-    }
-
-    @Override
     public void onSingleItemSelected(Bundle custom, int itemPosition) {
         long categoryId = custom.getLong(KEY_CATEGORY_ID);
 
@@ -106,7 +110,7 @@ public class AllCategoriesFragment
                 AddCategoryDialogFragment.newInstance(categoryId).show(getFragmentManager(), null);
                 break;
             case 1:
-                presenter.safeDeleteCategory(categoryId);
+                viewModel.safeDeleteCategory(categoryId);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -118,7 +122,7 @@ public class AllCategoriesFragment
         switch (whichButton) {
             case AlertDialog.BUTTON_POSITIVE:
                 long categoryId = fragment.getCustomBundle().getLong(KEY_CATEGORY_ID);
-                presenter.deleteCategory(categoryId);
+                viewModel.deleteCategory(categoryId);
                 fragment.dismiss();
                 break;
             case AlertDialog.BUTTON_NEGATIVE:
