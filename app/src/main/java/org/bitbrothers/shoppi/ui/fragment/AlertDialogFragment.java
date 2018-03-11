@@ -52,6 +52,11 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
             return this;
         }
 
+        public Builder setMessage(int stringResId) {
+            this.message = context.getString(stringResId);
+            return this;
+        }
+
         public Builder setItems(int stringArrayResId) {
             this.itemsArrayResId = stringArrayResId;
             return this;
@@ -62,8 +67,18 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
             return this;
         }
 
+        public Builder setPositiveButton(int stringResId) {
+            this.positiveButtonText = context.getString(stringResId);
+            return this;
+        }
+
         public Builder setNegativeButton(String text) {
             this.negativeButtonText = text;
+            return this;
+        }
+
+        public Builder setNegativeButton(int stringResId) {
+            this.negativeButtonText = context.getString(stringResId);
             return this;
         }
 

@@ -91,8 +91,8 @@ public class AllCategoriesFragment
     public void promptDeleteCategory(long categoryId, int itemCount) {
         AlertDialogFragment.Builder builder = new AlertDialogFragment.Builder(getActivity());
         builder.setMessage(getContext().getResources().getQuantityString(R.plurals.prompt_category_delete, itemCount, itemCount));
-        builder.setPositiveButton(getString(R.string.yes));
-        builder.setNegativeButton(getString(R.string.cancel));
+        builder.setPositiveButton(R.string.yes);
+        builder.setNegativeButton(R.string.cancel);
         Bundle customBundle = new Bundle();
         customBundle.putLong(KEY_CATEGORY_ID, categoryId);
         builder.setCustom(customBundle);
