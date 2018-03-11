@@ -78,29 +78,4 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
         this.shoppingItems = shoppingItems;
         notifyDataSetChanged();
     }
-
-    public void updateShoppingItem(ShoppingItem shoppingItem) {
-        int position = findPosition(shoppingItem.getId());
-        if (position != -1) {
-            shoppingItems.set(position, shoppingItem);
-            this.notifyItemChanged(position);
-        }
-    }
-
-    public void removeShoppingItem(long id) {
-        int position = findPosition(id);
-        if (position != -1) {
-            shoppingItems.remove(position);
-            this.notifyItemRemoved(position);
-        }
-    }
-
-    private int findPosition(long id) {
-        for (int i = 0; i < shoppingItems.size(); ++i) {
-            if (shoppingItems.get(i).getId() == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }

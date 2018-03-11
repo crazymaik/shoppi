@@ -67,21 +67,4 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
         this.categories = categories;
         notifyDataSetChanged();
     }
-
-    public void removeCategory(long id) {
-        int position = findPosition(id);
-        if (position != -1) {
-            categories.remove(position);
-            this.notifyItemRemoved(position);
-        }
-    }
-
-    private int findPosition(long id) {
-        for (int i = 0; i < categories.size(); ++i) {
-            if (categories.get(i).getId() == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }

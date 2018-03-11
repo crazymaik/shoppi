@@ -71,22 +71,4 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         this.shoppingItems = shoppingItems;
         notifyDataSetChanged();
     }
-
-    public void removeShoppingItem(long id) {
-        int position = findPosition(id);
-        if (position != -1) {
-            shoppingItems.remove(position);
-            this.notifyItemRemoved(position);
-        }
-    }
-
-    private int findPosition(long id) {
-        for (int i = 0; i < shoppingItems.size(); ++i) {
-            if (shoppingItems.get(i).getId() == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
 }

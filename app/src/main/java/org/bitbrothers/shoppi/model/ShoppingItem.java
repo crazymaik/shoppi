@@ -55,14 +55,6 @@ public final class ShoppingItem {
         return bought;
     }
 
-    public ShoppingItem markBought() {
-        return new ShoppingItem(id, name, true, categoryId, color);
-    }
-
-    public ShoppingItem markUnbought() {
-        return new ShoppingItem(id, name, false, categoryId, color);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
