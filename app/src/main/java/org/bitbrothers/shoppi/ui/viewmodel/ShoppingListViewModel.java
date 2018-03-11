@@ -42,7 +42,7 @@ public class ShoppingListViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(id -> {
-                    removeShoppingItem(id);
+                    removeShoppingItemFromList(id);
                 }, error -> {
 
                 });
@@ -52,7 +52,7 @@ public class ShoppingListViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     if (shoppingItem.isBought()) {
-                        removeShoppingItem(shoppingItem.getId());
+                        removeShoppingItemFromList(shoppingItem.getId());
                     } else {
                         retrieveShoppingItems();
                     }
@@ -111,7 +111,7 @@ public class ShoppingListViewModel extends ViewModel {
                 });
     }
 
-    private void removeShoppingItem(long id) {
+    private void removeShoppingItemFromList(long id) {
         for (int i = 0; i < shoppingItems.size(); ++i) {
             if (shoppingItems.get(i).getId() == id) {
                 shoppingItems.remove(i);
@@ -119,5 +119,4 @@ public class ShoppingListViewModel extends ViewModel {
             }
         }
     }
-
 }

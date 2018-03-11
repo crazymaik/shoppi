@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel;
 import org.bitbrothers.shoppi.ui.viewmodel.AllCategoriesViewModel;
+import org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel;
 import org.bitbrothers.shoppi.ui.viewmodel.ShoppingListViewModel;
 
 public class DependencyAwareViewModelFactory implements ViewModelProvider.Factory {
@@ -28,6 +29,8 @@ public class DependencyAwareViewModelFactory implements ViewModelProvider.Factor
             return (T) new AllCategoriesViewModel(app.getCategoryRepository());
         } else if (modelClass.equals(ShoppingListViewModel.class)) {
             return (T) new ShoppingListViewModel(app.getShoppingItemRepository(), app.getCategoryRepository());
+        } else if (modelClass.equals(AllShoppingItemsViewModel.class)) {
+            return (T) new AllShoppingItemsViewModel(app.getShoppingItemRepository(), app.getCategoryRepository());
         } else {
             throw new IllegalArgumentException();
         }

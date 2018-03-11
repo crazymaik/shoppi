@@ -2,9 +2,12 @@ package org.bitbrothers.shoppi.ui.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -18,22 +21,21 @@ import android.widget.Spinner;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
+import org.bitbrothers.shoppi.databinding.FragmentAllShoppingItemsBinding;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
-import org.bitbrothers.shoppi.presenter.AllShoppingItemsPresenter;
 import org.bitbrothers.shoppi.ui.adapter.AllShoppingItemsAdapter;
 import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallback;
+import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackBaseAdapter;
 import org.bitbrothers.shoppi.ui.view.TextWatcherAdapter;
+import org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel;
 import org.bitbrothers.shoppi.ui.widget.BetterEditText;
 
-import java.util.List;
-
 public class AllShoppingItemsFragment
-        extends BaseFragment<AllShoppingItemsPresenter>
-        implements AllShoppingItemsPresenter.View {
+        extends Fragment {
 
-    private static final String KEY_ADD_CONTAINER_VISIBLE = "add_container_visible";
-
+    private AllShoppingItemsViewModel viewModel;
     private AllShoppingItemsAdapter shoppingItemsAdapter;
     private CategoriesSpinnerAdapter categoriesSpinnerAdapter;
     private ViewGroup addShoppingItemContainer;
@@ -41,43 +43,67 @@ public class AllShoppingItemsFragment
     private BetterEditText addShoppingItemEditText;
     private Button addShoppingItemButton;
 
+    private final Observable.OnPropertyChangedCallback onAddContainerVisibilityPropertyChanged = new Observable.OnPropertyChangedCallback() {
+        @Override
+        public void onPropertyChanged(Observable observable, int i) {
+            if (viewModel.addContainerVisibility.get() == View.VISIBLE) {
+                addShoppingItemContainer.setTranslationY(0);
+                addShoppingItemSpinner.setSelection(-1);
+                addShoppingItemEditText.setText("");
+                addShoppingItemEditText.requestFocus();
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(this, ShoppiApplication.from(getContext()).getViewModelFactory()).get(AllShoppingItemsViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentAllShoppingItemsBinding binding = FragmentAllShoppingItemsBinding.inflate(inflater, container, false);
+        View rootView = binding.getRoot();
+
+        binding.setVm(viewModel);
+
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+
         shoppingItemsAdapter = new AllShoppingItemsAdapter(new AllShoppingItemsAdapter.Callback() {
             @Override
             public void removeShoppingItem(ShoppingItem shoppingItem) {
-                presenter.deleteShoppingItem(shoppingItem);
+                viewModel.deleteShoppingItem(shoppingItem);
             }
 
             @Override
             public void toggleMark(ShoppingItem shoppingItem) {
                 if (shoppingItem.isBought()) {
-                    presenter.unmarkBought(shoppingItem);
+                    viewModel.unmarkBought(shoppingItem);
                 } else {
-                    presenter.markBought(shoppingItem);
+                    viewModel.markBought(shoppingItem);
                 }
             }
         });
+
+        shoppingItemsAdapter.setShoppingItems(viewModel.shoppingItems);
+        viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallback(shoppingItemsAdapter));
+
         categoriesSpinnerAdapter = new CategoriesSpinnerAdapter();
-    }
+        categoriesSpinnerAdapter.setCategories(viewModel.categories);
+        viewModel.categories.addOnListChangedCallback(new WeakOnListChangedCallbackBaseAdapter(categoriesSpinnerAdapter));
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_shopping_items, container, false);
-        FloatingActionButton fab = view.findViewById(R.id.fab);
-
-        addShoppingItemContainer = view.findViewById(R.id.add_container);
-        addShoppingItemSpinner = view.findViewById(R.id.add_shopping_item_spinner);
-        addShoppingItemEditText = view.findViewById(R.id.add_shopping_item_edit);
-        addShoppingItemButton = view.findViewById(R.id.add_shopping_item_button);
+        addShoppingItemContainer = rootView.findViewById(R.id.add_container);
+        addShoppingItemSpinner = rootView.findViewById(R.id.add_shopping_item_spinner);
+        addShoppingItemEditText = rootView.findViewById(R.id.add_shopping_item_edit);
+        addShoppingItemButton = rootView.findViewById(R.id.add_shopping_item_button);
 
         addShoppingItemSpinner.setAdapter(categoriesSpinnerAdapter);
 
         Runnable addShoppingItemAndReset = () -> {
             Category selectedCategory = (Category) addShoppingItemSpinner.getSelectedItem();
             String selectedName = addShoppingItemEditText.getText().toString();
-            presenter.addShoppingItem(selectedName, selectedCategory);
+            viewModel.addShoppingItem(selectedName, selectedCategory);
             // TODO this should prevent further input and only reset after adding the
             // shopping item actually completed
             addShoppingItemEditText.setText("");
@@ -113,8 +139,7 @@ public class AllShoppingItemsFragment
             addShoppingItemContainer.animate().translationY(-addShoppingItemContainer.getHeight()).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    addShoppingItemContainer.setVisibility(View.GONE);
-                    addShoppingItemContainer.setTranslationY(0);
+                    viewModel.addContainerVisibility.set(View.GONE);
                 }
             }).start();
         });
@@ -123,59 +148,35 @@ public class AllShoppingItemsFragment
             addShoppingItemAndReset.run();
         });
 
+        viewModel.addContainerVisibility.addOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
+
         fab.setOnClickListener(v -> {
-            presenter.openAddShoppingItemView();
+            viewModel.openAddShoppingItemView();
         });
 
-        RecyclerView recyclerView = view.findViewById(android.R.id.list);
+        RecyclerView recyclerView = rootView.findViewById(android.R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(shoppingItemsAdapter);
 
-        if (savedInstanceState != null) {
-            addShoppingItemContainer.setVisibility(savedInstanceState.getBoolean(KEY_ADD_CONTAINER_VISIBLE, false) ? View.VISIBLE : View.GONE);
-        }
-
-        return view;
+        return rootView;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_ADD_CONTAINER_VISIBLE, addShoppingItemContainer.getVisibility() == View.VISIBLE);
+    public void onStart() {
+        super.onStart();
+        viewModel.attach();
     }
 
     @Override
-    public void removeShoppingItem(long id) {
-        shoppingItemsAdapter.removeShoppingItem(id);
+    public void onStop() {
+        viewModel.detach();
+        super.onStop();
     }
 
     @Override
-    public void showShoppingItems(List<ShoppingItem> shoppingItems) {
-        shoppingItemsAdapter.setShoppingItems(shoppingItems);
+    public void onDestroyView() {
+        viewModel.addContainerVisibility.removeOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
+        super.onDestroyView();
     }
-
-    @Override
-    public void updateShoppingItem(ShoppingItem shoppingItem) {
-        shoppingItemsAdapter.updateShoppingItem(shoppingItem);
-    }
-
-    @Override
-    public void setCategories(List<Category> categories) {
-        categoriesSpinnerAdapter.setCategories(categories);
-    }
-
-    @Override
-    public void showAddShoppingItemView() {
-        addShoppingItemSpinner.setSelection(0);
-        addShoppingItemEditText.setText("");
-        addShoppingItemContainer.setVisibility(View.VISIBLE);
-        addShoppingItemEditText.requestFocus();
-    }
-
-    @Override
-    protected AllShoppingItemsPresenter createPresenter() {
-        return ShoppiApplication.from(getContext()).getAllShoppingItemsPresenter();
-    }
-
 }

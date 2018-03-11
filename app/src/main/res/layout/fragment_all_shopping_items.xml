@@ -1,67 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.AllShoppingItemsFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@android:id/list"
+    <data>
+
+        <variable
+            name="vm"
+            type="org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/li_shopping_item" />
+        tools:context=".ui.fragment.AllShoppingItemsFragment">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_white_24dp" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/add_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <Spinner
-            android:id="@+id/add_shopping_item_spinner"
+        <android.support.v7.widget.RecyclerView
+            android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            tools:listitem="@layout/li_shopping_item" />
 
-        <org.bitbrothers.shoppi.ui.widget.BetterEditText
-            android:id="@+id/add_shopping_item_edit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:hint="Shopping Item"
-            android:imeActionId="@integer/ime_action_done"
-            android:imeActionLabel="Add"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences"
-            android:lines="1"
-            android:maxLines="1"
-            android:singleLine="true"
-            app:layout_constraintEnd_toStartOf="@id/add_shopping_item_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
-
-        <Button
-            android:id="@+id/add_shopping_item_button"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Add"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
-    </android.support.constraint.ConstraintLayout>
+            app:srcCompat="@drawable/ic_add_white_24dp" />
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/add_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:visibility="@{vm.addContainerVisibility}">
+
+            <Spinner
+                android:id="@+id/add_shopping_item_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <org.bitbrothers.shoppi.ui.widget.BetterEditText
+                android:id="@+id/add_shopping_item_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:hint="Shopping Item"
+                android:imeActionId="@integer/ime_action_done"
+                android:imeActionLabel="Add"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"
+                android:lines="1"
+                android:maxLines="1"
+                android:singleLine="true"
+                app:layout_constraintEnd_toStartOf="@id/add_shopping_item_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
+
+            <Button
+                android:id="@+id/add_shopping_item_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Add"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
