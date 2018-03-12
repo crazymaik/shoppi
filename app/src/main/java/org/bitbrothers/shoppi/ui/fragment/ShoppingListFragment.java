@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
@@ -49,5 +50,10 @@ public class ShoppingListFragment
         listView.setAdapter(shoppingListAdapter);
 
         return view;
+    }
+
+    @Override
+    public void showMarkBoughtFailed(ShoppingItem shoppingItem) {
+        Toast.makeText(getActivity(), getString(R.string.shopping_list_error_mark_bought, shoppingItem.getName()), Toast.LENGTH_LONG).show();
     }
 }

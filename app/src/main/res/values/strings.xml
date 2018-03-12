@@ -15,6 +15,7 @@
     <string name="tab_all_categories">Categories</string>
     <string name="tab_all_items">All Items</string>
     <string name="tab_shopping_list">Shopping List</string>
+    <string name="shopping_list_error_mark_bought">Cannot remove %s from shopping list</string>
     <plurals name="prompt_category_delete">
         <item quantity="one">This category has %d assigned shopping item. Are you sure you want to delete it?</item>
         <item quantity="other">This category has %d assigned shopping items. Are you sure you want to delete it?</item>

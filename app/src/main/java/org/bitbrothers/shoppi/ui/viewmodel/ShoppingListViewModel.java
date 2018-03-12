@@ -12,6 +12,8 @@ import io.reactivex.schedulers.Schedulers;
 public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.View> {
 
     public interface View extends BaseViewModel.BaseView {
+
+        void showMarkBoughtFailed(ShoppingItem shoppingItem);
     }
 
     public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
@@ -86,7 +88,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
                 }, error -> {
-
+                    withView(view -> view.showMarkBoughtFailed(shoppingItem));
                 });
     }
 
