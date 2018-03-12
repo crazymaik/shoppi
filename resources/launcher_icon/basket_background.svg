@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="basket.svg">
+   sodipodi:docname="basket_background.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="138.30263"
+     inkscape:cx="140.32294"
      inkscape:cy="157.49957"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,14 +58,14 @@
      id="layer1"
      transform="translate(0,-189)">
     <rect
-       style="fill:#33499c;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-opacity:1"
+       style="fill:#98a7dd;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-opacity:1"
        id="rect834"
        width="108"
        height="108"
        x="0"
        y="189" />
     <path
-       style="fill:#020e70;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#33499c;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 0,297 V 189 H 108 L 0,297"
        id="path836"
        inkscape:connector-curvature="0" />

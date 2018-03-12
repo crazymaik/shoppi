@@ -5,10 +5,10 @@
     android:viewportWidth="108">
     <group android:translateY="-189">
         <path
-            android:fillColor="#33499c"
+            android:fillColor="#6077cb"
             android:pathData="M0 189l108 0 0 108 -108 0z" />
         <path
-            android:fillColor="#020e70"
+            android:fillColor="#33499c"
             android:pathData="M0 297L0 189 108 189 0 297"
             android:strokeLineCap="butt"
             android:strokeLineJoin="miter" />
