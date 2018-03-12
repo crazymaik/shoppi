@@ -1,6 +1,5 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
-import android.arch.lifecycle.ViewModel;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -17,7 +16,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddCategoryViewModel extends ViewModel {
+public class AddCategoryViewModel extends BaseViewModel {
 
     public final ObservableBoolean formFieldsEnabled = new ObservableBoolean(true);
 

@@ -7,7 +7,6 @@ import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,7 +18,7 @@ import org.bitbrothers.shoppi.databinding.FragmentAddCategoryBinding;
 import org.bitbrothers.shoppi.ui.adapter.CategoryColorsAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel;
 
-public class AddCategoryDialogFragment extends AppCompatDialogFragment {
+public class AddCategoryDialogFragment extends BaseDialogFragment<AddCategoryViewModel> {
 
     public static final String KEY_CATEGORY_ID = "category_id";
 
@@ -35,7 +34,6 @@ public class AddCategoryDialogFragment extends AppCompatDialogFragment {
         return fragment;
     }
 
-    private AddCategoryViewModel viewModel;
     private CategoryColorsAdapter categoryColorsAdapter;
     private RecyclerView colorsView;
     private Button positiveButton;
