@@ -3,7 +3,6 @@ package org.bitbrothers.shoppi.ui.fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,9 +16,10 @@ import org.bitbrothers.shoppi.ui.adapter.ShoppingListAdapter;
 import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.ShoppingListViewModel;
 
-public class ShoppingListFragment extends Fragment {
+public class ShoppingListFragment
+        extends BaseFragment<ShoppingListViewModel>
+        implements ShoppingListViewModel.View {
 
-    private ShoppingListViewModel viewModel;
     private ShoppingListAdapter shoppingListAdapter;
 
     @Override
@@ -49,17 +49,5 @@ public class ShoppingListFragment extends Fragment {
         listView.setAdapter(shoppingListAdapter);
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.attach();
-    }
-
-    @Override
-    public void onStop() {
-        viewModel.detach();
-        super.onStop();
     }
 }

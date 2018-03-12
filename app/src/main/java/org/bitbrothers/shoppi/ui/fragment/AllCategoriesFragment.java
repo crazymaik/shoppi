@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +18,7 @@ import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAd
 import org.bitbrothers.shoppi.ui.viewmodel.AllCategoriesViewModel;
 
 public class AllCategoriesFragment
-        extends Fragment
+        extends BaseFragment<AllCategoriesViewModel>
         implements AllCategoriesViewModel.View, AlertDialogFragment.OnSingleItemSelectedListener, AlertDialogFragment.OnButtonClickListener {
 
     private static final String TAG_CATEGORY_OPTIONS = "category_options_tag";
@@ -27,7 +26,6 @@ public class AllCategoriesFragment
     private static final String TAG_PROMPT_DELETE_CATEGORY = "prompt_delete_category_tag";
 
     private AllCategoriesAdapter categoriesAdapter;
-    private AllCategoriesViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,12 +61,6 @@ public class AllCategoriesFragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.attach(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         AlertDialogFragment categoryOptionsFragment = (AlertDialogFragment) getFragmentManager().findFragmentByTag(TAG_CATEGORY_OPTIONS);
@@ -79,12 +71,6 @@ public class AllCategoriesFragment
         if (promptDeleteFragment != null) {
             promptDeleteFragment.setOnButtonClickListener(this);
         }
-    }
-
-    @Override
-    public void onStop() {
-        viewModel.detach();
-        super.onStop();
     }
 
     @Override

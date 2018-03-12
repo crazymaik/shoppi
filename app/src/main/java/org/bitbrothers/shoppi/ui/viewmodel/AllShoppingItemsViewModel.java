@@ -13,7 +13,10 @@ import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AllShoppingItemsViewModel extends BaseViewModel {
+public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsViewModel.View> {
+
+    public interface View extends BaseViewModel.BaseView {
+    }
 
     public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
     public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
@@ -31,8 +34,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel {
     }
 
     @Override
-    public void attach() {
-        super.attach();
+    public void attach(View view) {
+        super.attach(view);
 
         addViewDisposable(shoppingItemRepository.getOnItemAddedObservable()
                 .subscribeOn(Schedulers.io())

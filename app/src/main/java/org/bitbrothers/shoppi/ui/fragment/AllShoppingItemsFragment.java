@@ -7,7 +7,6 @@ import android.content.Context;
 import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -31,9 +30,10 @@ import org.bitbrothers.shoppi.ui.view.TextWatcherAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel;
 import org.bitbrothers.shoppi.ui.widget.BetterEditText;
 
-public class AllShoppingItemsFragment extends Fragment {
+public class AllShoppingItemsFragment
+        extends BaseFragment<AllShoppingItemsViewModel>
+        implements AllShoppingItemsViewModel.View {
 
-    private AllShoppingItemsViewModel viewModel;
     private ViewGroup addShoppingItemContainer;
     private BetterEditText addShoppingItemEditText;
 
@@ -146,18 +146,6 @@ public class AllShoppingItemsFragment extends Fragment {
         recyclerView.setAdapter(shoppingItemsAdapter);
 
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.attach();
-    }
-
-    @Override
-    public void onStop() {
-        viewModel.detach();
-        super.onStop();
     }
 
     @Override

@@ -9,9 +9,9 @@ import org.bitbrothers.shoppi.store.CategoryRepository;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AllCategoriesViewModel extends BaseViewModel {
+public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel.View> {
 
-    public interface View {
+    public interface View extends BaseViewModel.BaseView {
 
         void promptDeleteCategory(long categoryId, int itemCount);
     }
@@ -19,15 +19,14 @@ public class AllCategoriesViewModel extends BaseViewModel {
     public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
 
     private final CategoryRepository categoryRepository;
-    private View view;
 
     public AllCategoriesViewModel(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
+    @Override
     public void attach(View view) {
-        super.attach();
-        this.view = view;
+        super.attach(view);
 
         addViewDisposable(categoryRepository.getOnItemAddedObservable()
                 .subscribeOn(Schedulers.io())
@@ -84,9 +83,7 @@ public class AllCategoriesViewModel extends BaseViewModel {
                     if (itemCount == 0) {
                         deleteCategory(categoryId);
                     } else {
-                        if (view != null) {
-                            view.promptDeleteCategory(categoryId, itemCount);
-                        }
+                        withView(view -> view.promptDeleteCategory(categoryId, itemCount));
                     }
                 }, error -> {
                 });
