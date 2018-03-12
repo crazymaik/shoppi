@@ -41,6 +41,7 @@
                 android:id="@+id/add_shopping_item_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:selectedItemPosition="@={vm.addContainerCategoryPosition}"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <org.bitbrothers.shoppi.ui.widget.BetterEditText
@@ -57,6 +58,7 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:text="@={vm.addContainerName}"
                 app:layout_constraintEnd_toStartOf="@id/add_shopping_item_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />
@@ -66,6 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:enabled="@{!vm.addContainerName.isEmpty() &amp;&amp; vm.addContainerButtonEnabled}"
                 android:text="@string/add"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/add_shopping_item_spinner" />

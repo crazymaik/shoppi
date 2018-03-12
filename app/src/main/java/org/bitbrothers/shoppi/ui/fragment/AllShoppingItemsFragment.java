@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.databinding.FragmentAllShoppingItemsBinding;
-import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.ui.adapter.AllShoppingItemsAdapter;
 import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
@@ -32,24 +31,17 @@ import org.bitbrothers.shoppi.ui.view.TextWatcherAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel;
 import org.bitbrothers.shoppi.ui.widget.BetterEditText;
 
-public class AllShoppingItemsFragment
-        extends Fragment {
+public class AllShoppingItemsFragment extends Fragment {
 
     private AllShoppingItemsViewModel viewModel;
-    private AllShoppingItemsAdapter shoppingItemsAdapter;
-    private CategoriesSpinnerAdapter categoriesSpinnerAdapter;
     private ViewGroup addShoppingItemContainer;
-    private Spinner addShoppingItemSpinner;
     private BetterEditText addShoppingItemEditText;
-    private Button addShoppingItemButton;
 
     private final Observable.OnPropertyChangedCallback onAddContainerVisibilityPropertyChanged = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable observable, int i) {
             if (viewModel.addContainerVisibility.get() == View.VISIBLE) {
                 addShoppingItemContainer.setTranslationY(0);
-                addShoppingItemSpinner.setSelection(-1);
-                addShoppingItemEditText.setText("");
                 addShoppingItemEditText.requestFocus();
             }
         }
@@ -64,13 +56,11 @@ public class AllShoppingItemsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentAllShoppingItemsBinding binding = FragmentAllShoppingItemsBinding.inflate(inflater, container, false);
-        View rootView = binding.getRoot();
-
         binding.setVm(viewModel);
 
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        View rootView = binding.getRoot();
 
-        shoppingItemsAdapter = new AllShoppingItemsAdapter(new AllShoppingItemsAdapter.Callback() {
+        AllShoppingItemsAdapter shoppingItemsAdapter = new AllShoppingItemsAdapter(new AllShoppingItemsAdapter.Callback() {
             @Override
             public void removeShoppingItem(ShoppingItem shoppingItem) {
                 viewModel.deleteShoppingItem(shoppingItem);
@@ -89,24 +79,19 @@ public class AllShoppingItemsFragment
         shoppingItemsAdapter.setShoppingItems(viewModel.shoppingItems);
         viewModel.shoppingItems.addOnListChangedCallback(new WeakOnListChangedCallbackRecyclerViewAdapter(shoppingItemsAdapter));
 
-        categoriesSpinnerAdapter = new CategoriesSpinnerAdapter();
+        CategoriesSpinnerAdapter categoriesSpinnerAdapter = new CategoriesSpinnerAdapter();
         categoriesSpinnerAdapter.setCategories(viewModel.categories);
         viewModel.categories.addOnListChangedCallback(new WeakOnListChangedCallbackBaseAdapter(categoriesSpinnerAdapter));
 
         addShoppingItemContainer = rootView.findViewById(R.id.add_container);
-        addShoppingItemSpinner = rootView.findViewById(R.id.add_shopping_item_spinner);
+        Spinner addShoppingItemSpinner = rootView.findViewById(R.id.add_shopping_item_spinner);
         addShoppingItemEditText = rootView.findViewById(R.id.add_shopping_item_edit);
-        addShoppingItemButton = rootView.findViewById(R.id.add_shopping_item_button);
+        Button addShoppingItemButton = rootView.findViewById(R.id.add_shopping_item_button);
 
         addShoppingItemSpinner.setAdapter(categoriesSpinnerAdapter);
 
         Runnable addShoppingItemAndReset = () -> {
-            Category selectedCategory = (Category) addShoppingItemSpinner.getSelectedItem();
-            String selectedName = addShoppingItemEditText.getText().toString();
-            viewModel.addShoppingItem(selectedName, selectedCategory);
-            // TODO this should prevent further input and only reset after adding the
-            // shopping item actually completed
-            addShoppingItemEditText.setText("");
+            viewModel.addShoppingItem();
         };
 
         addShoppingItemEditText.addTextChangedListener(new TextWatcherAdapter() {
@@ -150,6 +135,7 @@ public class AllShoppingItemsFragment
 
         viewModel.addContainerVisibility.addOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
 
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             viewModel.openAddShoppingItemView();
         });

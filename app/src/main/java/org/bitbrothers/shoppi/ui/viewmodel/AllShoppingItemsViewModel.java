@@ -1,6 +1,8 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 
 import org.bitbrothers.shoppi.model.Category;
@@ -15,6 +17,9 @@ public class AllShoppingItemsViewModel extends BaseViewModel {
 
     public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
     public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
+    public final ObservableBoolean addContainerButtonEnabled = new ObservableBoolean(false);
+    public final ObservableField<String> addContainerName = new ObservableField<>("");
+    public final ObservableInt addContainerCategoryPosition = new ObservableInt(-1);
     public final ObservableInt addContainerVisibility = new ObservableInt(android.view.View.GONE);
 
     private final ShoppingItemRepository shoppingItemRepository;
@@ -78,25 +83,33 @@ public class AllShoppingItemsViewModel extends BaseViewModel {
     }
 
     public void openAddShoppingItemView() {
+        addContainerButtonEnabled.set(false);
         categoryRepository.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(categories -> {
                     this.categories.clear();
                     this.categories.addAll(categories);
+                    addContainerButtonEnabled.set(true);
+                    addContainerName.set("");
+                    addContainerCategoryPosition.set(categories.isEmpty() ? -1 : 0);
                     addContainerVisibility.set(android.view.View.VISIBLE);
                 }, error -> {
                 });
     }
 
-    public void addShoppingItem(String name, Category category) {
+    public void addShoppingItem() {
+        String name = addContainerName.get();
+        Category category = addContainerCategoryPosition.get() == -1 ? null : categories.get(addContainerCategoryPosition.get());
+        addContainerButtonEnabled.set(false);
+        addContainerName.set("");
         shoppingItemRepository.create(new ShoppingItem(name, category))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
-
+                    addContainerButtonEnabled.set(true);
                 }, error -> {
-
+                    addContainerButtonEnabled.set(true);
                 });
     }
 
