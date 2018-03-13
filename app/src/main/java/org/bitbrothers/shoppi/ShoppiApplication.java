@@ -3,6 +3,8 @@ package org.bitbrothers.shoppi;
 import android.app.Application;
 import android.content.Context;
 
+import org.bitbrothers.shoppi.logging.Logger;
+import org.bitbrothers.shoppi.logging.ProdLogger;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.SQLiteCategoryRepository;
 import org.bitbrothers.shoppi.store.SQLiteOpenHelper;
@@ -15,6 +17,7 @@ public class ShoppiApplication extends Application {
     private CategoryRepository categoryRepository;
     private ShoppingItemRepository shoppingItemRepository;
     private DependencyAwareViewModelFactory viewModelFactory;
+    private Logger logger;
 
     public static ShoppiApplication from(Context context) {
         return (ShoppiApplication) context.getApplicationContext();
@@ -24,11 +27,17 @@ public class ShoppiApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        logger = new ProdLogger(this);
+
         SQLiteOpenHelper sqliteOpenHelper = new SQLiteOpenHelper(this, "main");
         shoppingItemRepository = new SQLiteShoppingItemRepository(sqliteOpenHelper);
         categoryRepository = new SQLiteCategoryRepository(sqliteOpenHelper);
 
         viewModelFactory = new DependencyAwareViewModelFactory(this);
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     public ShoppingItemRepository getShoppingItemRepository() {

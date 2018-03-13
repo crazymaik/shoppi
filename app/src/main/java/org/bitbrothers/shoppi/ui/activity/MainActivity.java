@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this.getApplicationContext());
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

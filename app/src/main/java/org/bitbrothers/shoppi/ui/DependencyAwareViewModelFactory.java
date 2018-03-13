@@ -24,13 +24,13 @@ public class DependencyAwareViewModelFactory implements ViewModelProvider.Factor
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         ShoppiApplication app = ShoppiApplication.from(context);
         if (modelClass.equals(AddCategoryViewModel.class)) {
-            return (T) new AddCategoryViewModel(app.getCategoryRepository());
+            return (T) new AddCategoryViewModel(app.getLogger(), app.getCategoryRepository());
         } else if (modelClass.equals(AllCategoriesViewModel.class)) {
-            return (T) new AllCategoriesViewModel(app.getCategoryRepository());
+            return (T) new AllCategoriesViewModel(app.getLogger(), app.getCategoryRepository());
         } else if (modelClass.equals(ShoppingListViewModel.class)) {
-            return (T) new ShoppingListViewModel(app.getShoppingItemRepository(), app.getCategoryRepository());
+            return (T) new ShoppingListViewModel(app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
         } else if (modelClass.equals(AllShoppingItemsViewModel.class)) {
-            return (T) new AllShoppingItemsViewModel(app.getShoppingItemRepository(), app.getCategoryRepository());
+            return (T) new AllShoppingItemsViewModel(app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
         } else {
             throw new IllegalArgumentException();
         }

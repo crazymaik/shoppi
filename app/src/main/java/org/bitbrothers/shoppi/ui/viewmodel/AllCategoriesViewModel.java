@@ -1,8 +1,8 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
-import android.util.Log;
 
+import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 
@@ -20,7 +20,8 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
 
     private final CategoryRepository categoryRepository;
 
-    public AllCategoriesViewModel(CategoryRepository categoryRepository) {
+    public AllCategoriesViewModel(Logger logger, CategoryRepository categoryRepository) {
+        super(logger);
         this.categoryRepository = categoryRepository;
     }
 
@@ -34,7 +35,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
-
+                    logError("all_categories_shopping_item_added", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
@@ -43,7 +44,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
-
+                    logError("all_categories_shopping_item_updated", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
@@ -57,7 +58,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                         }
                     }
                 }, error -> {
-
+                    logError("all_categories_shopping_item_removed", error);
                 }));
 
         retrieveCategories();
@@ -71,7 +72,8 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                     this.categories.clear();
                     this.categories.addAll(categories);
                 }, error -> {
-                    Log.e("AllCategoriesPresenter", "Retrieving categories failed", error);
+                    logError("all_categories_retrieving_categories", error);
+                    // TODO show error on view
                 });
     }
 
@@ -86,6 +88,8 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                         withView(view -> view.promptDeleteCategory(categoryId, itemCount));
                     }
                 }, error -> {
+                    logError("all_categories_retrieving_category_usage", error);
+                    // TODO show error on view
                 });
     }
 
@@ -95,6 +99,8 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                 }, error -> {
+                    logError("all_categories_deleting_category", error);
+                    // TODO show error on view
                 });
     }
 }

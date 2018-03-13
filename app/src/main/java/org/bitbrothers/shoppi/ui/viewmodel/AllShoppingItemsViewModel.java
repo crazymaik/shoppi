@@ -5,6 +5,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 
+import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
@@ -28,7 +29,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
 
-    public AllShoppingItemsViewModel(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+    public AllShoppingItemsViewModel(Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+        super(logger);
         this.shoppingItemRepository = shoppingItemRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -43,7 +45,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("all_shopping_items_shopping_item_added", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
@@ -52,7 +54,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(id -> {
                     removeShoppingItemFromList(id);
                 }, error -> {
-
+                    logError("all_shopping_items_shopping_item_removed", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemBoughtStateChangedObservable()
@@ -61,7 +63,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItem -> {
                     updateShoppingItemInList(shoppingItem);
                 }, error -> {
-
+                    logError("all_shopping_items_shopping_item_bought_changed", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
@@ -70,7 +72,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("all_shopping_items_category_updated", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
@@ -79,7 +81,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("all_shopping_items_category_removed", error);
                 }));
 
         retrieveShoppingItems();
@@ -98,6 +100,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     addContainerCategoryPosition.set(categories.isEmpty() ? -1 : 0);
                     addContainerVisibility.set(android.view.View.VISIBLE);
                 }, error -> {
+                    logError("all_shopping_items_getall_categories", error);
+                    // TODO show error on view
                 });
     }
 
@@ -112,6 +116,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItem -> {
                     addContainerButtonEnabled.set(true);
                 }, error -> {
+                    logError("all_shopping_items_create_item", error);
+                    // TODO show error on view
                     addContainerButtonEnabled.set(true);
                 });
     }
@@ -122,6 +128,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                 }, error -> {
+                    logError("all_shopping_items_delete_item", error);
+                    // TODO show error
                 });
     }
 
@@ -131,6 +139,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
+                    logError("all_shopping_items_markbought_item", error);
+                    // TODO show error
                 });
     }
 
@@ -140,6 +150,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
+                    logError("all_shopping_items_unmarkbought_item", error);
+                    // TODO show error
                 });
     }
 
@@ -151,7 +163,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
-                    // TODO
+                    logError("all_shopping_items_retrieving_items", error);
+                    // TODO show error
                 });
     }
 

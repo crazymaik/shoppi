@@ -2,6 +2,7 @@ package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
 
+import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
@@ -21,7 +22,8 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
 
-    public ShoppingListViewModel(ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+    public ShoppingListViewModel(Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+        super(logger);
         this.shoppingItemRepository = shoppingItemRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -36,7 +38,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("shopping_list_shopping_item_added", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
@@ -45,7 +47,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(id -> {
                     removeShoppingItemFromList(id);
                 }, error -> {
-
+                    logError("shopping_list_shopping_item_removed", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemBoughtStateChangedObservable()
@@ -58,7 +60,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                         retrieveShoppingItems();
                     }
                 }, error -> {
-
+                    logError("shopping_list_shopping_item_bought_changed", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
@@ -67,7 +69,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("shopping_list_category_updated", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
@@ -76,7 +78,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-
+                    logError("shopping_list_category_removed", error);
                 }));
 
         retrieveShoppingItems();
@@ -88,6 +90,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItems -> {
                 }, error -> {
+                    logError("shopping_list_marking_bought", error);
                     withView(view -> view.showMarkBoughtFailed(shoppingItem));
                 });
     }
@@ -100,7 +103,8 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
-                    // TODO
+                    logError("shopping_list_retrieving_shopping_items", error);
+                    // TODO show error on view
                 });
     }
 

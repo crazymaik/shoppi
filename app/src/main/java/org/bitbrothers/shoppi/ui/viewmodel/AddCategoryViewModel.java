@@ -6,6 +6,7 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.view.View;
 
+import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 
@@ -49,7 +50,8 @@ public class AddCategoryViewModel extends BaseViewModel {
 
     private Long categoryId;
 
-    public AddCategoryViewModel(CategoryRepository categoryRepository) {
+    public AddCategoryViewModel(Logger logger, CategoryRepository categoryRepository) {
+        super(logger);
         this.categoryRepository = categoryRepository;
 
         categoryName.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -70,12 +72,11 @@ public class AddCategoryViewModel extends BaseViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(category -> {
                     categoryName.set(category.getName());
-                    // TODO what to do if not found
                     selectedColorPosition.set(colorValues.indexOf(category.getColor()));
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 }, error -> {
-                    // TODO
+                    logError("add_category_retrieving_category", error);
                 });
     }
 
@@ -97,6 +98,7 @@ public class AddCategoryViewModel extends BaseViewModel {
                 .subscribe(category -> {
                     close.set(true);
                 }, error -> {
+                    logError("add_category_saving_category", error);
                     showSaveErrorMessage();
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);

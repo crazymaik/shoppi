@@ -1,7 +1,10 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
+import android.os.Bundle;
 import android.os.Looper;
+
+import org.bitbrothers.shoppi.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +19,14 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
     }
 
     private final List<Consumer<ViewType>> onViewActions = new ArrayList<>();
+    protected final Logger logger;
     private boolean isCleared;
     private CompositeDisposable viewDisposables;
     private ViewType view;
+
+    public BaseViewModel(Logger logger) {
+        this.logger = logger;
+    }
 
     public void attach(ViewType view) {
         this.view = view;
@@ -65,7 +73,7 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
         }
 
         if (Looper.getMainLooper() != Looper.myLooper()) {
-            // TODO;
+            logError("with_view_wrong_looper");
         }
 
         if (view != null) {
@@ -79,7 +87,19 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
         try {
             action.accept(view);
         } catch (Exception e) {
-            // TODO
+            logError("run_action", e);
         }
+    }
+
+    protected void logError(String name) {
+        Bundle params = new Bundle();
+        params.putString("class", getClass().getSimpleName());
+        logger.logError(name, params);
+    }
+
+    protected void logError(String name, Throwable ex) {
+        Bundle params = new Bundle();
+        params.putString("class", getClass().getSimpleName());
+        logger.logError(name, params, ex);
     }
 }
