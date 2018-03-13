@@ -21,12 +21,14 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     private final SQLiteOpenHelper sqliteOpenHelper;
 
     private final Subject<ShoppingItem> onItemAddedSubject;
+    private final Subject<ShoppingItem> onItemUpdatedSubject;
     private final Subject<Long> onItemRemovedSubject;
     private final Subject<ShoppingItem> onItemBoughtStateChangedSubject;
 
     public SQLiteShoppingItemRepository(SQLiteOpenHelper sqLiteOpenHelper) {
         this.sqliteOpenHelper = sqLiteOpenHelper;
         this.onItemAddedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
+        this.onItemUpdatedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
         this.onItemRemovedSubject = PublishSubject.<Long>create().toSerialized();
         this.onItemBoughtStateChangedSubject = PublishSubject.<ShoppingItem>create().toSerialized();
     }
@@ -47,6 +49,25 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
 
             emitter.onSuccess(id);
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemAddedSubject::onNext);
+    }
+
+    @Override
+    public Single<ShoppingItem> update(ShoppingItem shoppingItem) {
+        return Single.create((SingleEmitter<Long> emitter) -> {
+            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
+                ContentValues values = new ContentValues();
+                values.put("name", shoppingItem.getName());
+                values.put("bought", shoppingItem.isBought() ? 1 : 0);
+                values.put("category_id", shoppingItem.getCategoryId());
+
+                int rowCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
+
+                if (rowCount != 1) {
+                    throw new RuntimeException();
+                }
+            }
+            emitter.onSuccess(shoppingItem.getId());
+        }).flatMap((Long id) -> get(id)).doOnSuccess(onItemUpdatedSubject::onNext);
     }
 
     @Override
@@ -139,6 +160,11 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Observable<ShoppingItem> getOnItemAddedObservable() {
         return onItemAddedSubject;
+    }
+
+    @Override
+    public Observable<ShoppingItem> getOnItemUpdatedObservable() {
+        return onItemUpdatedSubject;
     }
 
     @Override

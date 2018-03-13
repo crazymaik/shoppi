@@ -42,6 +42,15 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                     logError("shopping_list_shopping_item_added", error);
                 }));
 
+        addViewDisposable(shoppingItemRepository.getOnItemUpdatedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+                    logError("shopping_list_shopping_item_updated", error);
+                }));
+
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

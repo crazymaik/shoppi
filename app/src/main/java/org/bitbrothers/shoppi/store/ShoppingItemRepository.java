@@ -12,6 +12,8 @@ public interface ShoppingItemRepository {
 
     Single<ShoppingItem> create(ShoppingItem shoppingItem);
 
+    Single<ShoppingItem> update(ShoppingItem shoppingItem);
+
     Completable delete(long id);
 
     Single<ShoppingItem> get(long id);
@@ -25,6 +27,8 @@ public interface ShoppingItemRepository {
     Single<ShoppingItem> unmarkBought(ShoppingItem shoppingItem);
 
     Observable<ShoppingItem> getOnItemAddedObservable();
+
+    Observable<ShoppingItem> getOnItemUpdatedObservable();
 
     Observable<Long> getOnItemRemovedObservable();
 

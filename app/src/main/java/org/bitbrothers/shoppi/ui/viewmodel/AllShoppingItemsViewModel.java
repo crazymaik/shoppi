@@ -49,6 +49,15 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     logError("all_shopping_items_shopping_item_added", error);
                 }));
 
+        addViewDisposable(shoppingItemRepository.getOnItemUpdatedObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shoppingItem -> {
+                    retrieveShoppingItems();
+                }, error -> {
+                    logError("all_shopping_items_shopping_item_updated", error);
+                }));
+
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -123,8 +132,8 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 });
     }
 
-    public void deleteShoppingItem(ShoppingItem shoppingItem) {
-        shoppingItemRepository.delete(shoppingItem.getId())
+    public void deleteShoppingItem(long shoppingItemId) {
+        shoppingItemRepository.delete(shoppingItemId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {

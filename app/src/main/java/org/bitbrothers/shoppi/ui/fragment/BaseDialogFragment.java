@@ -22,6 +22,12 @@ public class BaseDialogFragment<ViewModel extends BaseViewModel> extends AppComp
     }
 
     @Override
+    public void onDestroy() {
+        viewModel = null;
+        super.onDestroy();
+    }
+
+    @Override
     public void showErrorToast(int messageResId) {
         Toast.makeText(getContext(), messageResId, Toast.LENGTH_LONG).show();
     }

@@ -18,9 +18,9 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
 
     public interface Callback {
 
-        void removeShoppingItem(ShoppingItem shoppingItem);
+        void onClick(ShoppingItem shoppingItem);
 
-        void toggleMark(ShoppingItem shoppingItem);
+        void onLongClick(ShoppingItem shoppingItem);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,11 +34,11 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
             this.colorField = itemView.findViewById(R.id.shopping_item_color);
 
             itemView.setOnClickListener(v -> {
-                callback.toggleMark(shoppingItems.get(getAdapterPosition()));
+                callback.onClick(shoppingItems.get(getAdapterPosition()));
             });
 
             itemView.setOnLongClickListener(v -> {
-                callback.removeShoppingItem(shoppingItems.get(getAdapterPosition()));
+                callback.onLongClick(shoppingItems.get(getAdapterPosition()));
                 return true;
             });
         }

@@ -32,7 +32,10 @@ import org.bitbrothers.shoppi.ui.widget.BetterEditText;
 
 public class AllShoppingItemsFragment
         extends BaseFragment<AllShoppingItemsViewModel>
-        implements AllShoppingItemsViewModel.View {
+        implements AllShoppingItemsViewModel.View, AlertDialogFragment.OnSingleItemSelectedListener {
+
+    private static final String TAG_SHOPPING_ITEM_OPTIONS = "shopping_item_options_tag";
+    private static final String KEY_SHOPPING_ITEM_ID = "shopping_item_id";
 
     private ViewGroup addShoppingItemContainer;
     private BetterEditText addShoppingItemEditText;
@@ -62,12 +65,12 @@ public class AllShoppingItemsFragment
 
         AllShoppingItemsAdapter shoppingItemsAdapter = new AllShoppingItemsAdapter(new AllShoppingItemsAdapter.Callback() {
             @Override
-            public void removeShoppingItem(ShoppingItem shoppingItem) {
-                viewModel.deleteShoppingItem(shoppingItem);
+            public void onLongClick(ShoppingItem shoppingItem) {
+                showShoppingItemOptionsDialog(shoppingItem);
             }
 
             @Override
-            public void toggleMark(ShoppingItem shoppingItem) {
+            public void onClick(ShoppingItem shoppingItem) {
                 if (shoppingItem.isBought()) {
                     viewModel.unmarkBought(shoppingItem);
                 } else {
@@ -149,8 +152,49 @@ public class AllShoppingItemsFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        AlertDialogFragment shoppingItemOptionsFragment = (AlertDialogFragment) getFragmentManager().findFragmentByTag(TAG_SHOPPING_ITEM_OPTIONS);
+        if (shoppingItemOptionsFragment != null) {
+            shoppingItemOptionsFragment.setOnSingleItemSelectedListener(this);
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         viewModel.addContainerVisibility.removeOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onSingleItemSelected(Bundle custom, int itemPosition) {
+        long shoppingItemId = custom.getLong(KEY_SHOPPING_ITEM_ID);
+
+        switch (itemPosition) {
+            case 0:
+                EditShoppingItemDialogFragment.newInstance(shoppingItemId).show(getFragmentManager(), null);
+                break;
+            case 1:
+                viewModel.deleteShoppingItem(shoppingItemId);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    private void showShoppingItemOptionsDialog(ShoppingItem shoppingItem) {
+        Bundle customBundle = new Bundle();
+
+        customBundle.putLong(KEY_SHOPPING_ITEM_ID, shoppingItem.getId());
+        AlertDialogFragment.Builder builder = new AlertDialogFragment.Builder(getActivity());
+
+        builder.setCancelable(true);
+        builder.setTitle(shoppingItem.getName());
+        builder.setItems(R.array.category_options);
+        builder.setCustom(customBundle);
+
+        AlertDialogFragment fragment = builder.create();
+        fragment.setOnSingleItemSelectedListener(this);
+        fragment.show(getFragmentManager(), TAG_SHOPPING_ITEM_OPTIONS);
     }
 }
