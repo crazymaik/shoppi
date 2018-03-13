@@ -6,6 +6,7 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.view.View;
 
+import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
@@ -17,7 +18,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddCategoryViewModel extends BaseViewModel {
+public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> {
 
     public final ObservableBoolean formFieldsEnabled = new ObservableBoolean(true);
 
@@ -77,6 +78,8 @@ public class AddCategoryViewModel extends BaseViewModel {
                     saveButtonEnabled.set(true);
                 }, error -> {
                     logError("add_category_retrieving_category", error);
+                    withView(view -> view.showErrorToast(R.string.add_category_error_retrieving_category));
+                    close.set(true);
                 });
     }
 

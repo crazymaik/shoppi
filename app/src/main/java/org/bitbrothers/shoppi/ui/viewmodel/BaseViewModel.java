@@ -3,6 +3,7 @@ package org.bitbrothers.shoppi.ui.viewmodel;
 import android.arch.lifecycle.ViewModel;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.StringRes;
 
 import org.bitbrothers.shoppi.logging.Logger;
 
@@ -16,6 +17,10 @@ import io.reactivex.functions.Consumer;
 public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends ViewModel {
 
     public interface BaseView {
+
+        void showErrorToast(@StringRes int messageResId);
+
+        void showErrorToast(@StringRes int formatMessageResId, Object... args);
     }
 
     private final List<Consumer<ViewType>> onViewActions = new ArrayList<>();

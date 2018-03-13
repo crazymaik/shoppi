@@ -2,6 +2,7 @@ package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
 
+import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
@@ -73,7 +74,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                     this.categories.addAll(categories);
                 }, error -> {
                     logError("all_categories_retrieving_categories", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.all_categories_error_retrieving_categories));
                 });
     }
 
@@ -89,7 +90,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                     }
                 }, error -> {
                     logError("all_categories_retrieving_category_usage", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.all_categories_error_retrieving_category_usage));
                 });
     }
 
@@ -100,7 +101,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 .subscribe(() -> {
                 }, error -> {
                     logError("all_categories_deleting_category", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.all_categories_error_deleting_category));
                 });
     }
 }

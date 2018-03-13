@@ -2,6 +2,7 @@ package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
 
+import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
@@ -104,7 +105,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                     this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
                     logError("shopping_list_retrieving_shopping_items", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.shopping_list_error_retrieving_shopping_items));
                 });
     }
 

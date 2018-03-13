@@ -5,6 +5,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 
+import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.model.ShoppingItem;
@@ -101,7 +102,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     addContainerVisibility.set(android.view.View.VISIBLE);
                 }, error -> {
                     logError("all_shopping_items_getall_categories", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_retrieving_categories_for_add));
                 });
     }
 
@@ -117,7 +118,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     addContainerButtonEnabled.set(true);
                 }, error -> {
                     logError("all_shopping_items_create_item", error);
-                    // TODO show error on view
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_adding_item));
                     addContainerButtonEnabled.set(true);
                 });
     }
@@ -129,7 +130,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(() -> {
                 }, error -> {
                     logError("all_shopping_items_delete_item", error);
-                    // TODO show error
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_deleting_item));
                 });
     }
 
@@ -140,7 +141,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
                     logError("all_shopping_items_markbought_item", error);
-                    // TODO show error
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_mark_bought));
                 });
     }
 
@@ -151,7 +152,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
                     logError("all_shopping_items_unmarkbought_item", error);
-                    // TODO show error
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_unmark_bought));
                 });
     }
 
@@ -164,7 +165,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
                     logError("all_shopping_items_retrieving_items", error);
-                    // TODO show error
+                    withView(view -> view.showErrorToast(R.string.all_shopping_items_error_retrieving_shopping_items));
                 });
     }
 
