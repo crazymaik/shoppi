@@ -31,6 +31,7 @@ public class ProdLogger implements Logger {
     @Override
     public void logError(String name, Bundle params, Throwable ex) {
         params.putString("exception_class", ex != null ? ex.getClass().getCanonicalName() : "null");
+        params.putString("exception_message", ex != null ? ex.getMessage() : "null");
         analytics.logEvent("error_" + name, params);
     }
 }
