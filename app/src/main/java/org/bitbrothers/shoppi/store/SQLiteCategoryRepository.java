@@ -34,15 +34,12 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Single<Category> create(Category category) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            long id;
+            ContentValues values = new ContentValues();
+            values.put("name", category.getName());
+            values.put("color", category.getColor());
 
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("name", category.getName());
-                values.put("color", category.getColor());
-
-                id = db.insert("categories", null, values);
-            }
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            long id = db.insert("categories", null, values);
 
             emitter.onSuccess(id);
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemAddedSubject::onNext);
@@ -51,17 +48,17 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Single<Category> update(Category category) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("name", category.getName());
-                values.put("color", category.getColor());
+            ContentValues values = new ContentValues();
+            values.put("name", category.getName());
+            values.put("color", category.getColor());
 
-                int rowCount = db.update("categories", values, "id = ?", new String[]{"" + category.getId()});
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            int rowCount = db.update("categories", values, "id = ?", new String[]{"" + category.getId()});
 
-                if (rowCount != 1) {
-                    throw new RuntimeException();
-                }
+            if (rowCount != 1) {
+                throw new RuntimeException();
             }
+
             emitter.onSuccess(category.getId());
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemUpdatedSubject::onNext);
     }
@@ -69,13 +66,13 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Completable delete(long id) {
         return Completable.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                int deleteCount = db.delete("categories", "id = ?", new String[]{"" + id});
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            int deleteCount = db.delete("categories", "id = ?", new String[]{"" + id});
 
-                if (deleteCount != 1) {
-                    emitter.onError(new RuntimeException());
-                }
+            if (deleteCount != 1) {
+                emitter.onError(new RuntimeException());
             }
+
             emitter.onComplete();
         }).doOnComplete(() -> onItemRemovedSubject.onNext(id));
     }
@@ -83,9 +80,8 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Single<Category> get(long id) {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("categories", new String[]{"id", "name", "color"}, "id = ?", new String[]{"" + id}, null, null, null)) {
-
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            try (Cursor cursor = db.query("categories", new String[]{"id", "name", "color"}, "id = ?", new String[]{"" + id}, null, null, null)) {
                 if (!cursor.moveToNext()) {
                     emitter.onError(new RuntimeException());
                 }
@@ -100,8 +96,8 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Single<List<Category>> getAll() {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("categories", new String[]{"id", "name", "color"}, null, null, null, null, "name collate nocase asc")) {
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            try (Cursor cursor = db.query("categories", new String[]{"id", "name", "color"}, null, null, null, null, "name collate nocase asc")) {
                 List<Category> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }
@@ -111,8 +107,8 @@ public class SQLiteCategoryRepository implements CategoryRepository {
     @Override
     public Single<Integer> getAssignedShoppingItemsCount(long categoryId) {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.query("shopping_items", new String[]{"count(*)"}, "category_id = ?", new String[]{"" + categoryId}, null, null, null)) {
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            try (Cursor cursor = db.query("shopping_items", new String[]{"count(*)"}, "category_id = ?", new String[]{"" + categoryId}, null, null, null)) {
 
                 if (!cursor.moveToNext()) {
                     emitter.onError(new RuntimeException());

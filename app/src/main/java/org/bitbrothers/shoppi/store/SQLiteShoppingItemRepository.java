@@ -36,16 +36,13 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<ShoppingItem> create(ShoppingItem shoppingItem) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            long id;
+            ContentValues values = new ContentValues();
+            values.put("name", shoppingItem.getName());
+            values.put("bought", shoppingItem.isBought() ? 1 : 0);
+            values.put("category_id", shoppingItem.getCategoryId());
 
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("name", shoppingItem.getName());
-                values.put("bought", shoppingItem.isBought() ? 1 : 0);
-                values.put("category_id", shoppingItem.getCategoryId());
-
-                id = db.insert("shopping_items", null, values);
-            }
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            long id = db.insert("shopping_items", null, values);
 
             emitter.onSuccess(id);
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemAddedSubject::onNext);
@@ -54,18 +51,18 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<ShoppingItem> update(ShoppingItem shoppingItem) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("name", shoppingItem.getName());
-                values.put("bought", shoppingItem.isBought() ? 1 : 0);
-                values.put("category_id", shoppingItem.getCategoryId());
+            ContentValues values = new ContentValues();
+            values.put("name", shoppingItem.getName());
+            values.put("bought", shoppingItem.isBought() ? 1 : 0);
+            values.put("category_id", shoppingItem.getCategoryId());
 
-                int rowCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            int rowCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
 
-                if (rowCount != 1) {
-                    throw new RuntimeException();
-                }
+            if (rowCount != 1) {
+                throw new RuntimeException();
             }
+
             emitter.onSuccess(shoppingItem.getId());
         }).flatMap((Long id) -> get(id)).doOnSuccess(onItemUpdatedSubject::onNext);
     }
@@ -73,13 +70,13 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Completable delete(long id) {
         return Completable.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase()) {
-                int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
+            SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+            int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
 
-                if (deleteCount != 1) {
-                    emitter.onError(new RuntimeException());
-                }
+            if (deleteCount != 1) {
+                emitter.onError(new RuntimeException());
             }
+
             emitter.onComplete();
         }).doOnComplete(() -> onItemRemovedSubject.onNext(id));
     }
@@ -87,9 +84,9 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<ShoppingItem> get(long id) {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.id = ?", new String[]{"" + id})) {
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
 
+            try (Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.id = ?", new String[]{"" + id})) {
                 if (!cursor.moveToNext()) {
                     emitter.onError(new RuntimeException());
                 }
@@ -108,8 +105,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<List<ShoppingItem>> getAll() {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id order by s.name collate nocase asc", null)) {
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            try (Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id order by s.name collate nocase asc", null)) {
                 List<ShoppingItem> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }
@@ -119,8 +116,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<List<ShoppingItem>> getUnboughtOrderedByCategories() {
         return Single.create(emitter -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
-                 Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.bought = 0 order by c.name collate nocase asc", null)) {
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            try (Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.bought = 0 order by c.name collate nocase asc", null)) {
                 List<ShoppingItem> items = cursorToList(cursor);
                 emitter.onSuccess(items);
             }
@@ -130,30 +127,34 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
     @Override
     public Single<ShoppingItem> markBought(ShoppingItem shoppingItem) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("bought", true);
-                int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
-                if (updateCount != 1) {
-                    emitter.onError(new RuntimeException());
-                }
-                emitter.onSuccess(shoppingItem.getId());
+            ContentValues values = new ContentValues();
+            values.put("bought", true);
+
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
+
+            if (updateCount != 1) {
+                emitter.onError(new RuntimeException());
             }
+
+            emitter.onSuccess(shoppingItem.getId());
         }).flatMap(id -> get(id)).doOnSuccess(onItemBoughtStateChangedSubject::onNext);
     }
 
     @Override
     public Single<ShoppingItem> unmarkBought(ShoppingItem shoppingItem) {
         return Single.create((SingleEmitter<Long> emitter) -> {
-            try (SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase()) {
-                ContentValues values = new ContentValues();
-                values.put("bought", false);
-                int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
-                if (updateCount != 1) {
-                    emitter.onError(new RuntimeException());
-                }
-                emitter.onSuccess(shoppingItem.getId());
+            ContentValues values = new ContentValues();
+            values.put("bought", false);
+
+            SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
+            int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
+
+            if (updateCount != 1) {
+                emitter.onError(new RuntimeException());
             }
+
+            emitter.onSuccess(shoppingItem.getId());
         }).flatMap(id -> get(id)).doOnSuccess(onItemBoughtStateChangedSubject::onNext);
     }
 
