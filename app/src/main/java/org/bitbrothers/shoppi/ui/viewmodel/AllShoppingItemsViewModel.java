@@ -25,7 +25,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
     public final ObservableBoolean addContainerButtonEnabled = new ObservableBoolean(false);
     public final ObservableField<String> addContainerName = new ObservableField<>("");
     public final ObservableInt addContainerCategoryPosition = new ObservableInt(-1);
-    public final ObservableInt addContainerVisibility = new ObservableInt(android.view.View.GONE);
+    public final ObservableBoolean addContainerVisible = new ObservableBoolean(false);
 
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
@@ -108,7 +108,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                     addContainerButtonEnabled.set(true);
                     addContainerName.set("");
                     addContainerCategoryPosition.set(categories.isEmpty() ? -1 : 0);
-                    addContainerVisibility.set(android.view.View.VISIBLE);
+                    addContainerVisible.set(true);
                 }, error -> {
                     logError("all_shopping_items_getall_categories", error);
                     withView(view -> view.showErrorToast(R.string.all_shopping_items_error_retrieving_categories_for_add));

@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="vm"
             type="org.bitbrothers.shoppi.ui.viewmodel.AllShoppingItemsViewModel" />
@@ -25,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:visibility="@{vm.addContainerVisible ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_add_white_24dp" />
@@ -35,7 +38,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:elevation="4dp"
-            android:visibility="@{vm.addContainerVisibility}">
+            android:visibility="@{vm.addContainerVisible ? View.VISIBLE : View.GONE}">
 
             <Spinner
                 android:id="@+id/add_shopping_item_spinner"

@@ -44,7 +44,7 @@ public class AllShoppingItemsFragment
     private final Observable.OnPropertyChangedCallback onAddContainerVisibilityPropertyChanged = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable observable, int i) {
-            if (viewModel.addContainerVisibility.get() == View.VISIBLE) {
+            if (viewModel.addContainerVisible.get()) {
                 addShoppingItemContainer.setTranslationY(0);
                 addShoppingItemEditText.requestFocus();
             }
@@ -52,7 +52,7 @@ public class AllShoppingItemsFragment
     };
 
     private final MainActivity.OnBackPressedListener onBackPressedListener = () -> {
-        if (viewModel.addContainerVisibility.get() == View.VISIBLE && getUserVisibleHint()) {
+        if (viewModel.addContainerVisible.get() && getUserVisibleHint()) {
             hideAddShoppingItemContainer();
             return true;
         }
@@ -154,7 +154,7 @@ public class AllShoppingItemsFragment
             addShoppingItemAndReset.run();
         });
 
-        viewModel.addContainerVisibility.addOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
+        viewModel.addContainerVisible.addOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
@@ -180,7 +180,7 @@ public class AllShoppingItemsFragment
 
     @Override
     public void onDestroyView() {
-        viewModel.addContainerVisibility.removeOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
+        viewModel.addContainerVisible.removeOnPropertyChangedCallback(onAddContainerVisibilityPropertyChanged);
         super.onDestroyView();
     }
 
@@ -226,7 +226,7 @@ public class AllShoppingItemsFragment
         addShoppingItemContainer.animate().translationY(-addShoppingItemContainer.getHeight()).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                viewModel.addContainerVisibility.set(View.GONE);
+                viewModel.addContainerVisible.set(false);
             }
         }).start();
     }
