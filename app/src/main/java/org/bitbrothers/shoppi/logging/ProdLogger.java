@@ -5,12 +5,15 @@ import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.bitbrothers.shoppi.BuildConfig;
+
 public class ProdLogger implements Logger {
 
     private final FirebaseAnalytics analytics;
 
     public ProdLogger(Context context) {
         analytics = FirebaseAnalytics.getInstance(context);
+        analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
     }
 
     @Override
