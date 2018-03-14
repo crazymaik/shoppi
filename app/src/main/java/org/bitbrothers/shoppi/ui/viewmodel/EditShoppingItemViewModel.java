@@ -62,7 +62,7 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 }, error -> {
-                    logError("edit_shopping_item_retrieving_shopping_item", error);
+                    logError("edit_shopping_item_retrieving", error);
                     withView(view -> view.showErrorToast(R.string.edit_shopping_item_error_retrieving));
                     close.set(true);
                 });

@@ -77,7 +77,7 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 }, error -> {
-                    logError("add_category_retrieving_category", error);
+                    logError("add_category_retrieving", error);
                     withView(view -> view.showErrorToast(R.string.add_category_error_retrieving_category));
                     close.set(true);
                 });
@@ -101,7 +101,7 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
                 .subscribe(category -> {
                     close.set(true);
                 }, error -> {
-                    logError("add_category_saving_category", error);
+                    logError("add_category_saving", error);
                     showSaveErrorMessage();
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);

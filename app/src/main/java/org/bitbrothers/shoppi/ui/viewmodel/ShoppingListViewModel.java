@@ -39,7 +39,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-                    logError("shopping_list_shopping_item_added", error);
+                    logError("shopping_list_item_added", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemUpdatedObservable()
@@ -48,7 +48,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
-                    logError("shopping_list_shopping_item_updated", error);
+                    logError("shopping_list_item_updated", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
@@ -57,7 +57,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(id -> {
                     removeShoppingItemFromList(id);
                 }, error -> {
-                    logError("shopping_list_shopping_item_removed", error);
+                    logError("shopping_list_item_removed", error);
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemBoughtStateChangedObservable()
@@ -70,7 +70,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                         retrieveShoppingItems();
                     }
                 }, error -> {
-                    logError("shopping_list_shopping_item_bought_changed", error);
+                    logError("shopping_list_bought_changed", error);
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
@@ -113,7 +113,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);
                 }, error -> {
-                    logError("shopping_list_retrieving_shopping_items", error);
+                    logError("shopping_list_retrieving_items", error);
                     withView(view -> view.showErrorToast(R.string.shopping_list_error_retrieving_shopping_items));
                 });
     }
