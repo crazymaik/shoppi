@@ -22,6 +22,7 @@ import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.databinding.FragmentAllShoppingItemsBinding;
 import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.ui.activity.MainActivity;
 import org.bitbrothers.shoppi.ui.adapter.AllShoppingItemsAdapter;
 import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
 import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackBaseAdapter;
@@ -49,6 +50,28 @@ public class AllShoppingItemsFragment
             }
         }
     };
+
+    private final MainActivity.OnBackPressedListener onBackPressedListener = () -> {
+        if (viewModel.addContainerVisibility.get() == View.VISIBLE && getUserVisibleHint()) {
+            hideAddShoppingItemContainer();
+            return true;
+        }
+        return false;
+    };
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (!isVisibleToUser && isResumed()) {
+            hideAddShoppingItemContainer();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity) getActivity()).addOnBackPressedListener(onBackPressedListener);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,12 +147,7 @@ public class AllShoppingItemsFragment
         });
 
         addShoppingItemEditText.setOnImeBackListener(v -> {
-            addShoppingItemContainer.animate().translationY(-addShoppingItemContainer.getHeight()).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    viewModel.addContainerVisibility.set(View.GONE);
-                }
-            }).start();
+            hideAddShoppingItemContainer();
         });
 
         addShoppingItemButton.setOnClickListener(v -> {
@@ -167,6 +185,12 @@ public class AllShoppingItemsFragment
     }
 
     @Override
+    public void onDetach() {
+        ((MainActivity) getActivity()).removeOnBackPressedListener(onBackPressedListener);
+        super.onDetach();
+    }
+
+    @Override
     public void onSingleItemSelected(Bundle custom, int itemPosition) {
         long shoppingItemId = custom.getLong(KEY_SHOPPING_ITEM_ID);
 
@@ -197,4 +221,14 @@ public class AllShoppingItemsFragment
         fragment.setOnSingleItemSelectedListener(this);
         fragment.show(getFragmentManager(), TAG_SHOPPING_ITEM_OPTIONS);
     }
+
+    private void hideAddShoppingItemContainer() {
+        addShoppingItemContainer.animate().translationY(-addShoppingItemContainer.getHeight()).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                viewModel.addContainerVisibility.set(View.GONE);
+            }
+        }).start();
+    }
+
 }

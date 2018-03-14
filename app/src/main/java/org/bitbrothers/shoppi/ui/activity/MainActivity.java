@@ -10,7 +10,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -20,15 +22,21 @@ import org.bitbrothers.shoppi.ui.fragment.AllCategoriesFragment;
 import org.bitbrothers.shoppi.ui.fragment.AllShoppingItemsFragment;
 import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAnalytics firebaseAnalytics;
+    public interface OnBackPressedListener {
+        boolean onBackPressed();
+    }
+
+    private final List<WeakReference<OnBackPressedListener>> onBackPressedListeners = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this.getApplicationContext());
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -50,9 +58,52 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(new PagerAdapter(this, getSupportFragmentManager()));
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                View view = getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
 
         TabLayout tabLayout = findViewById(R.id.pager_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    public void addOnBackPressedListener(OnBackPressedListener listener) {
+        onBackPressedListeners.add(new WeakReference<>(listener));
+    }
+
+    public void removeOnBackPressedListener(OnBackPressedListener removableListener) {
+        for (int i = onBackPressedListeners.size() - 1; i >= 0; --i) {
+            OnBackPressedListener listener = onBackPressedListeners.get(i).get();
+            if (listener != null) {
+                if (listener == removableListener) {
+                    onBackPressedListeners.remove(i);
+                }
+            } else {
+                onBackPressedListeners.remove(i);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        for (int i = onBackPressedListeners.size() - 1; i >= 0; --i) {
+            OnBackPressedListener listener = onBackPressedListeners.get(i).get();
+            if (listener != null) {
+                if (listener.onBackPressed()) {
+                    return;
+                }
+            } else {
+                onBackPressedListeners.remove(i);
+            }
+        }
+
+        super.onBackPressed();
     }
 
     private static class PagerAdapter extends FragmentStatePagerAdapter {

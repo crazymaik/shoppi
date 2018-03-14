@@ -36,4 +36,13 @@ public class BaseFragment<ViewModel extends BaseViewModel> extends Fragment impl
     public void showErrorToast(int formatMessageResId, Object... args) {
         Toast.makeText(getContext(), getString(formatMessageResId, args), Toast.LENGTH_LONG).show();
     }
+
+    /**
+     * Called by the containing activity to allow the fragment to consume the back key.
+     *
+     * @return True if back key was consumed by this fragment.
+     */
+    public boolean onBackKeyPressed() {
+        return false;
+    }
 }
