@@ -1,6 +1,7 @@
 <resources>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="category_unassigned_name">Unassigned</string>
     <string name="save">Save</string>
     <string name="yes">Yes</string>
     <string name="app_name">Shoppi</string>

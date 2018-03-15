@@ -57,7 +57,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         if (shoppingItem.getColor() != null) {
             holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
         } else {
-            holder.colorField.setImageResource(R.drawable.unknown_category);
+            holder.colorField.setImageDrawable(new ColorDrawable(0xff000000));
         }
         holder.nameField.setText(shoppingItem.getName());
     }

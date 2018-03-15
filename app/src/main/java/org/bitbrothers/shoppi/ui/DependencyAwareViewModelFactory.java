@@ -31,9 +31,9 @@ public class DependencyAwareViewModelFactory implements ViewModelProvider.Factor
         } else if (modelClass.equals(ShoppingListViewModel.class)) {
             return (T) new ShoppingListViewModel(app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
         } else if (modelClass.equals(AllShoppingItemsViewModel.class)) {
-            return (T) new AllShoppingItemsViewModel(app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
+            return (T) new AllShoppingItemsViewModel(app, app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
         } else if (modelClass.equals(EditShoppingItemViewModel.class)) {
-            return (T) new EditShoppingItemViewModel(app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
+            return (T) new EditShoppingItemViewModel(app, app.getLogger(), app.getShoppingItemRepository(), app.getCategoryRepository());
         } else {
             throw new IllegalArgumentException();
         }

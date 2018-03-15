@@ -1,5 +1,6 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
+import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -26,12 +27,15 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
     public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
     public final ObservableInt saveErrorVisibility = new ObservableInt(android.view.View.GONE);
     public final ObservableBoolean close = new ObservableBoolean(false);
+
+    private final Context context;
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
     private ShoppingItem shoppingItem;
 
-    public EditShoppingItemViewModel(Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+    public EditShoppingItemViewModel(Context context, Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         super(logger);
+        this.context = context;
         this.shoppingItemRepository = shoppingItemRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -46,10 +50,11 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
                 .subscribe(result -> {
                     this.shoppingItem = result.second;
                     this.categories.clear();
+                    this.categories.add(new Category(0l, context.getString(R.string.category_unassigned_name), 0xff000000));
                     this.categories.addAll(result.first);
 
-                    int position = -1;
-                    for (int i = 0; i < this.categories.size(); ++i) {
+                    int position = 0;
+                    for (int i = 1; i < this.categories.size(); ++i) {
                         if (this.categories.get(i).getId().equals(this.shoppingItem.getCategoryId())) {
                             position = i;
                             break;
@@ -94,7 +99,7 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
 
     private Category getSelectedCategory() {
         int position = shoppingItemCategoryPosition.get();
-        if (position == -1) {
+        if (position <= 0) {
             return new Category(null, "", 0);
         }
         return categories.get(position);

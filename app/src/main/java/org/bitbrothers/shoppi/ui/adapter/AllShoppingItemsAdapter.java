@@ -63,7 +63,7 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
         if (shoppingItem.getColor() != null) {
             holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
         } else {
-            holder.colorField.setImageResource(R.drawable.unknown_category);
+            holder.colorField.setImageDrawable(new ColorDrawable(0xff000000));
         }
         holder.nameField.setText(shoppingItem.getName());
         holder.nameField.setTextAppearance(shoppingItem.isBought() ? R.style.BoughtShoppingItemTextAppearance : R.style.TextAppearance_AppCompat_Medium);

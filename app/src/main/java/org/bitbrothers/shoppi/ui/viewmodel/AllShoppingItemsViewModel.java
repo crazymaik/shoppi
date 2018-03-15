@@ -1,5 +1,6 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
+import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -27,11 +28,13 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
     public final ObservableInt addContainerCategoryPosition = new ObservableInt(-1);
     public final ObservableBoolean addContainerVisible = new ObservableBoolean(false);
 
+    private final Context context;
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
 
-    public AllShoppingItemsViewModel(Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
+    public AllShoppingItemsViewModel(Context context, Logger logger, ShoppingItemRepository shoppingItemRepository, CategoryRepository categoryRepository) {
         super(logger);
+        this.context = context;
         this.shoppingItemRepository = shoppingItemRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -104,6 +107,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(categories -> {
                     this.categories.clear();
+                    this.categories.add(new Category(0l, context.getString(R.string.category_unassigned_name), 0xff000000));
                     this.categories.addAll(categories);
                     addContainerButtonEnabled.set(true);
                     addContainerName.set("");
@@ -117,7 +121,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
 
     public void addShoppingItem() {
         String name = addContainerName.get();
-        Category category = addContainerCategoryPosition.get() == -1 ? null : categories.get(addContainerCategoryPosition.get());
+        Category category = getSelectedCategory();
         addContainerButtonEnabled.set(false);
         addContainerName.set("");
         shoppingItemRepository.create(new ShoppingItem(name, category))
@@ -194,5 +198,13 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 break;
             }
         }
+    }
+
+    private Category getSelectedCategory() {
+        int position = addContainerCategoryPosition.get();
+        if (position <= 0) {
+            return new Category(null, "", 0);
+        }
+        return categories.get(position);
     }
 }

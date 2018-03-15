@@ -60,7 +60,7 @@ public class CategoriesSpinnerAdapter extends BaseAdapter {
         }
 
         Category category = categories.get(position);
-        vh.colorField.setImageDrawable(new ColorDrawable(category.getColor() | 0xff000000));
+        vh.colorField.setImageDrawable(new ColorDrawable(category.getColor()));
         vh.nameField.setText(category.getName());
 
         return convertView;
