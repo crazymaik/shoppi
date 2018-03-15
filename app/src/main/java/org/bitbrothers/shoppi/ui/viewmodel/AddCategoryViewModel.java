@@ -25,18 +25,30 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
     public final ObservableInt selectedColorPosition = new ObservableInt(0);
 
     public final List<Integer> colorValues = new ArrayList<Integer>() {{
-        add(0xFFDC0D0D);
-        add(0xFFDC6318);
-        add(0xFFDCD61A);
-        add(0xFF7BDC1A);
-        add(0xFF1ADC61);
-        add(0xFF18DCD2);
-        add(0xFF188BDC);
-        add(0xFF1644DC);
-        add(0xFF7718DC);
-        add(0xFFD618DC);
-        add(0xFFDC1898);
-        add(0xFFDC185D);
+        add(0xffcc5151);
+        add(0xffe51616);
+        add(0xffcc8e51);
+        add(0xffe57e16);
+        add(0xffcccc51);
+        add(0xffe5e516);
+        add(0xff8ecc51);
+        add(0xff7ee516);
+        add(0xff51cc51);
+        add(0xff16e516);
+        add(0xff51cc8e);
+        add(0xff16e57e);
+        add(0xff51cccc);
+        add(0xff16e5e5);
+        add(0xff518ecc);
+        add(0xff167ee5);
+        add(0xff5151cc);
+        add(0xff1616e5);
+        add(0xff8e51cc);
+        add(0xff7e16e5);
+        add(0xffcc51cc);
+        add(0xffe516e5);
+        add(0xffcc518e);
+        add(0xffe5167e);
     }};
 
     public final ObservableField<String> categoryName = new ObservableField<>("");

@@ -2,16 +2,16 @@ delete from shopping_items;
 delete from categories;
 
 insert into categories (id, name, color) VALUES
-    (1, 'Beverages', 0xFFDC0D0D),
-    (2, 'Bread & Bakery', 0xFFDC6318),
-    (3, 'Canned Goods & Soups', 0xFFDCD61A),
-    (4, 'Condiments, Spices & Bake', 0xFF7BDC1A),
-    (5, 'Dairy, Eggs & Cheese', 0xFF1ADC61),
-    (6, 'Frozen Foods', 0xFF18DCD2),
-    (7, 'Fruits & Vegetables', 0xFF188BDC),
-    (8, 'Grains, Pasta & Sides', 0xFF1644DC),
-    (9, 'Meat & Seafood', 0xFF7718DC),
-    (10, 'Personal Care & Health', 0xFFD618DC);
+    (1, 'Beverages', 0xffcc5151),
+    (2, 'Bread & Bakery', 0xffe57e16),
+    (3, 'Canned Goods & Soups', 0xff8ecc51),
+    (4, 'Condiments, Spices & Bake', 0xff16e516),
+    (5, 'Dairy, Eggs & Cheese', 0xff16e5e5),
+    (6, 'Frozen Foods', 0xff5151cc),
+    (7, 'Fruits & Vegetables', 0xff1616e5),
+    (8, 'Grains, Pasta & Sides', 0xff7e16e5),
+    (9, 'Meat & Seafood', 0xffe516e5),
+    (10, 'Personal Care & Health', 0xffe5167e);
 
 insert into shopping_items (name, bought, category_id) VALUES
     ('Diet Pepsi', 0, 1),
