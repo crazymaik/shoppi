@@ -4,7 +4,6 @@ import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
-import android.view.View;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
@@ -18,7 +17,11 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> {
+public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.View> {
+
+    public interface View extends BaseViewModel.BaseView {
+        void makeColorItemVisible(int position);
+    }
 
     public final ObservableBoolean formFieldsEnabled = new ObservableBoolean(true);
 
@@ -53,7 +56,7 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
 
     public final ObservableField<String> categoryName = new ObservableField<>("");
 
-    public final ObservableInt saveErrorVisibility = new ObservableInt(View.GONE);
+    public final ObservableInt saveErrorVisibility = new ObservableInt(android.view.View.GONE);
 
     public final ObservableBoolean saveButtonEnabled = new ObservableBoolean(false);
 
@@ -85,7 +88,9 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(category -> {
                     categoryName.set(category.getName());
-                    selectedColorPosition.set(colorValues.indexOf(category.getColor()));
+                    int position = colorValues.indexOf(category.getColor());
+                    withView(view -> view.makeColorItemVisible(position));
+                    selectedColorPosition.set(position);
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 }, error -> {
@@ -133,11 +138,11 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
     }
 
     private void hideSaveErrorMessage() {
-        saveErrorVisibility.set(View.GONE);
+        saveErrorVisibility.set(android.view.View.GONE);
     }
 
     private void showSaveErrorMessage() {
-        saveErrorVisibility.set(View.VISIBLE);
+        saveErrorVisibility.set(android.view.View.VISIBLE);
     }
 
 }

@@ -18,7 +18,9 @@ import org.bitbrothers.shoppi.databinding.FragmentAddCategoryBinding;
 import org.bitbrothers.shoppi.ui.adapter.CategoryColorsAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel;
 
-public class AddCategoryDialogFragment extends BaseDialogFragment<AddCategoryViewModel> {
+public class AddCategoryDialogFragment
+        extends BaseDialogFragment<AddCategoryViewModel>
+        implements AddCategoryViewModel.View {
 
     public static final String KEY_CATEGORY_ID = "category_id";
 
@@ -127,5 +129,10 @@ public class AddCategoryDialogFragment extends BaseDialogFragment<AddCategoryVie
         viewModel.saveButtonEnabled.removeOnPropertyChangedCallback(saveButtonEnabledPropertyChanged);
         viewModel.close.removeOnPropertyChangedCallback(closePropertyChanged);
         super.onStop();
+    }
+
+    @Override
+    public void makeColorItemVisible(int position) {
+        colorsView.getLayoutManager().scrollToPosition(position);
     }
 }
