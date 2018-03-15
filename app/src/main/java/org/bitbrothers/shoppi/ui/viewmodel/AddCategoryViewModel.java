@@ -56,7 +56,7 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
 
     public final ObservableField<String> categoryName = new ObservableField<>("");
 
-    public final ObservableInt saveErrorVisibility = new ObservableInt(android.view.View.GONE);
+    public final ObservableBoolean saveErrorVisible = new ObservableBoolean(false);
 
     public final ObservableBoolean saveButtonEnabled = new ObservableBoolean(false);
 
@@ -105,7 +105,7 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
     }
 
     public void save() {
-        hideSaveErrorMessage();
+        saveErrorVisible.set(false);
         formFieldsEnabled.set(false);
         saveButtonEnabled.set(false);
 
@@ -123,7 +123,7 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
                     close.set(true);
                 }, error -> {
                     logError("add_category_saving", error);
-                    showSaveErrorMessage();
+                    saveErrorVisible.set(true);
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 });
@@ -136,13 +136,4 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
     private int getSelectedColorValue() {
         return colorValues.get(selectedColorPosition.get());
     }
-
-    private void hideSaveErrorMessage() {
-        saveErrorVisibility.set(android.view.View.GONE);
-    }
-
-    private void showSaveErrorMessage() {
-        saveErrorVisibility.set(android.view.View.VISIBLE);
-    }
-
 }
