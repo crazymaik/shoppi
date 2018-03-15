@@ -83,7 +83,7 @@ public class AddCategoryDialogFragment extends BaseDialogFragment<AddCategoryVie
         FragmentAddCategoryBinding binding = FragmentAddCategoryBinding.inflate(getActivity().getLayoutInflater());
         View rootView = binding.getRoot();
 
-        builder.setTitle(R.string.add_category_title);
+        builder.setTitle(viewModel.isEditMode() ? R.string.add_category_title_edit : R.string.add_category_title_add);
         builder.setPositiveButton(R.string.save, null);
         builder.setNegativeButton(R.string.cancel, null);
         builder.setView(rootView);

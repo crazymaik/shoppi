@@ -83,6 +83,10 @@ public class AddCategoryViewModel extends BaseViewModel<BaseViewModel.BaseView> 
                 });
     }
 
+    public boolean isEditMode() {
+        return this.categoryId != null;
+    }
+
     public void save() {
         hideSaveErrorMessage();
         formFieldsEnabled.set(false);
