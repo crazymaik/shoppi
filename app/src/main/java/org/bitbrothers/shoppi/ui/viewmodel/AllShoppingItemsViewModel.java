@@ -19,6 +19,7 @@ import io.reactivex.schedulers.Schedulers;
 public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsViewModel.View> {
 
     public interface View extends BaseViewModel.BaseView {
+        void showShoppingItemAddedToast(String name);
     }
 
     public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
@@ -129,6 +130,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shoppingItem -> {
                     addContainerButtonEnabled.set(true);
+                    withView(view -> view.showShoppingItemAddedToast(shoppingItem.getName()));
                 }, error -> {
                     logError("all_shopping_items_create", error);
                     withView(view -> view.showErrorToast(R.string.all_shopping_items_error_adding_item));

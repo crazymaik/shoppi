@@ -18,6 +18,7 @@
     <string name="all_categories_error_retrieving_categories">Cannot retrieve existing categories!</string>
     <string name="all_categories_error_retrieving_category_usage">Cannot retrieve category information!</string>
     <string name="all_categories_error_deleting_category">Cannot delete category!</string>
+    <string name="all_shopping_items_added_toast">Added %s</string>
     <string name="all_shopping_items_error_adding_item">Cannot add shopping item!</string>
     <string name="all_shopping_items_error_deleting_item">Cannot delete shopping item!</string>
     <string name="all_shopping_items_error_mark_bought">Cannot remove shopping item to shopping list!</string>

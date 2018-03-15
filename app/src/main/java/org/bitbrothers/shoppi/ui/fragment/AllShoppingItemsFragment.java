@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
@@ -204,6 +205,11 @@ public class AllShoppingItemsFragment
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    public void showShoppingItemAddedToast(String name) {
+        Toast.makeText(getActivity(), getString(R.string.all_shopping_items_added_toast, name), Toast.LENGTH_SHORT).show();
     }
 
     private void showShoppingItemOptionsDialog(ShoppingItem shoppingItem) {
