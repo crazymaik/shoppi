@@ -60,7 +60,7 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
      */
     protected void addViewDisposable(Disposable disposable) {
         if (isCleared) {
-            return;
+            throw new IllegalStateException();
         }
 
         this.viewDisposables.add(disposable);
