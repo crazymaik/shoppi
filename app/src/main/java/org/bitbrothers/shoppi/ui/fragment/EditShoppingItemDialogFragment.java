@@ -17,7 +17,9 @@ import org.bitbrothers.shoppi.ui.adapter.CategoriesSpinnerAdapter;
 import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackBaseAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.EditShoppingItemViewModel;
 
-public class EditShoppingItemDialogFragment extends BaseDialogFragment<EditShoppingItemViewModel> {
+public class EditShoppingItemDialogFragment
+        extends BaseDialogFragment<EditShoppingItemViewModel>
+        implements EditShoppingItemViewModel.View {
 
     private static final String KEY_SHOPPING_ITEM_ID = "shopping_item_id";
 

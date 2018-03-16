@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="vm"
             type="org.bitbrothers.shoppi.ui.viewmodel.EditShoppingItemViewModel" />
@@ -43,6 +45,6 @@
             android:text="@string/edit_shopping_item_save_error"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/holo_red_dark"
-            android:visibility="@{vm.saveErrorVisibility}" />
+            android:visibility="@{vm.saveErrorVisible ? View.VISIBLE : View.GONE}" />
     </LinearLayout>
 </layout>

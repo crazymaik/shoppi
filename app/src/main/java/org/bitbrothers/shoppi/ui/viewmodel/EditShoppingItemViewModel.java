@@ -15,17 +15,18 @@ import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
-public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseView> {
+public class EditShoppingItemViewModel extends BaseViewModel<EditShoppingItemViewModel.View> {
 
-    public final ObservableBoolean formFieldsEnabled = new ObservableBoolean(true);
+    public interface View extends BaseViewModel.BaseView {
+    }
+
+    public final ObservableBoolean formFieldsEnabled = new ObservableBoolean(false);
     public final ObservableField<String> shoppingItemName = new ObservableField<>("");
     public final ObservableInt shoppingItemCategoryPosition = new ObservableInt(-1);
     public final ObservableBoolean saveButtonEnabled = new ObservableBoolean(false);
     public final ObservableArrayList<Category> categories = new ObservableArrayList<>();
-    public final ObservableInt saveErrorVisibility = new ObservableInt(android.view.View.GONE);
+    public final ObservableBoolean saveErrorVisible = new ObservableBoolean(false);
     public final ObservableBoolean close = new ObservableBoolean(false);
 
     private final Context context;
@@ -45,8 +46,7 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
         saveButtonEnabled.set(false);
 
         Single.zip(categoryRepository.getAll(), shoppingItemRepository.get(shoppingItemId), (categories, shoppingItem) -> Pair.create(categories, shoppingItem))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(result -> {
                     this.shoppingItem = result.second;
                     this.categories.clear();
@@ -76,18 +76,17 @@ public class EditShoppingItemViewModel extends BaseViewModel<BaseViewModel.BaseV
     public void save() {
         formFieldsEnabled.set(false);
         saveButtonEnabled.set(false);
-        saveErrorVisibility.set(android.view.View.GONE);
+        saveErrorVisible.set(false);
 
         Category category = getSelectedCategory();
 
         shoppingItemRepository.update(new ShoppingItem(shoppingItem.getId(), shoppingItemName.get(), shoppingItem.isBought(), category.getId(), category.getColor()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(shoppingItem -> {
                     close.set(true);
                 }, error -> {
                     logError("edit_shopping_item_saving", error);
-                    saveErrorVisibility.set(android.view.View.VISIBLE);
+                    saveErrorVisible.set(true);
                     formFieldsEnabled.set(true);
                     saveButtonEnabled.set(true);
                 });
