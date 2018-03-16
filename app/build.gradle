@@ -18,7 +18,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            buildConfigField "boolean", "FEATURE_PREFILL_CATEGORIES", "false"
+        }
         release {
+            buildConfigField "boolean", "FEATURE_PREFILL_CATEGORIES", "true"
+
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

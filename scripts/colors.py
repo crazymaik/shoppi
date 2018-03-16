@@ -43,6 +43,8 @@ def gen_color(h, s, v):
 
 def html_color(rgb):
     print("        <div class=\"cell\" style=\"background: #%s\"></div>" % rgb)
+    print("        <div class=\"desc\">add(0xff%s);</div>" % rgb)
+    print("<div class=\"clear\"></div>")
 
 
 def hex_colors():
@@ -63,15 +65,18 @@ def print_html():
                 height: 40px;
                 float: left;
             }
+            .desc {
+                height: 40px;
+                float: left;
+            }
+            .clear {
+                clear: both;
+            }
         </style>
     </head>
     <body>""")
     for rgb in hex_colors():
         html_color(rgb)
-    print("<div>")
-    for rgb in hex_colors():
-        print("add(0xff%s);<br>" % rgb)
-    print("</div>")
     print("""    </body></html>""")
 
 
