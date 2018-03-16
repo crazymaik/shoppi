@@ -1,10 +1,13 @@
 package org.bitbrothers.shoppi.store;
 
 
+import android.support.test.runner.AndroidJUnit4;
+
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.support.DatabaseRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -14,6 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+@RunWith(AndroidJUnit4.class)
 public class CategoryRepositoryInstrumentedTest {
 
     @Rule

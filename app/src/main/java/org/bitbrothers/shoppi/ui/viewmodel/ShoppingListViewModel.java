@@ -9,9 +9,6 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.View> {
 
     public interface View extends BaseViewModel.BaseView {
@@ -37,8 +34,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
         super.attach(view);
 
         addViewDisposable(shoppingItemRepository.getOnItemAddedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -46,8 +42,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemUpdatedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -55,8 +50,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(id -> {
                     removeShoppingItemFromList(id);
                 }, error -> {
@@ -64,8 +58,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemBoughtStateChangedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     if (shoppingItem.isBought()) {
                         removeShoppingItemFromList(shoppingItem.getId());
@@ -77,8 +70,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -86,8 +78,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -99,8 +90,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
 
     public void markBought(ShoppingItem shoppingItem) {
         shoppingItemRepository.markBought(shoppingItem)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(shoppingItems -> {
                 }, error -> {
                     logError("shopping_list_marking_bought", error);
@@ -110,8 +100,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
 
     private void retrieveShoppingItems() {
         shoppingItemRepository.getUnboughtOrderedByCategories()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(shoppingItems -> {
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);

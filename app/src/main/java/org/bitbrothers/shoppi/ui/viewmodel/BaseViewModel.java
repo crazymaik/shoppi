@@ -10,9 +10,15 @@ import org.bitbrothers.shoppi.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.CompletableTransformer;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.Scheduler;
+import io.reactivex.SingleTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends ViewModel {
 
@@ -28,9 +34,13 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
     private boolean isCleared;
     private CompositeDisposable viewDisposables;
     private ViewType view;
+    private CompletableTransformer completableTransformer;
+    private ObservableTransformer observableTransformer;
+    private SingleTransformer singleTransformer;
 
     public BaseViewModel(Logger logger) {
         this.logger = logger;
+        setSchedulers(Schedulers.io(), AndroidSchedulers.mainThread());
     }
 
     public void attach(ViewType view) {
@@ -51,6 +61,40 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
     protected void onCleared() {
         isCleared = true;
         onViewActions.clear();
+    }
+
+    /**
+     * Sets the schedulers used by the transformers returned by {@link #applyCompletableSchedulers()},
+     * {@link #applyObservableSchedulers()} and {@link #applySingleSchedulers()}.
+     *
+     * @param subscribeScheduler Scheduler to be used with {@code subscribeOn()}
+     * @param observeScheduler   Scheduler to be used with {@code observeOn()}
+     */
+    public void setSchedulers(Scheduler subscribeScheduler, Scheduler observeScheduler) {
+        completableTransformer = completable -> completable.subscribeOn(subscribeScheduler).observeOn(observeScheduler);
+        observableTransformer = observable -> observable.subscribeOn(subscribeScheduler).observeOn(observeScheduler);
+        singleTransformer = single -> single.subscribeOn(subscribeScheduler).observeOn(observeScheduler);
+    }
+
+    /**
+     * Returns an ObservableTransformer that applies the default schedulers for subscribe and observe.
+     */
+    protected <T> ObservableTransformer<T, T> applyObservableSchedulers() {
+        return (ObservableTransformer<T, T>) observableTransformer;
+    }
+
+    /**
+     * Returns a CompletableTransformer that applies the default schedulers for subscribe and observe.
+     */
+    protected CompletableTransformer applyCompletableSchedulers() {
+        return completableTransformer;
+    }
+
+    /**
+     * Returns a SingleTransformer that applies the default schedulers for subscribe and observe.
+     */
+    protected <T> SingleTransformer<T, T> applySingleSchedulers() {
+        return (SingleTransformer<T, T>) singleTransformer;
     }
 
     /**
@@ -96,12 +140,18 @@ public class BaseViewModel<ViewType extends BaseViewModel.BaseView> extends View
         }
     }
 
+    /**
+     * Logs an error with the given name.
+     */
     protected void logError(String name) {
         Bundle params = new Bundle();
         params.putString("class", getClass().getSimpleName());
         logger.logError(name, params);
     }
 
+    /**
+     * Logs an error with the given name and exception information from the given exception.
+     */
     protected void logError(String name, Throwable ex) {
         Bundle params = new Bundle();
         params.putString("class", getClass().getSimpleName());
