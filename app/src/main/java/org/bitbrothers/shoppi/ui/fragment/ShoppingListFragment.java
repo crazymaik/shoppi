@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
+import org.bitbrothers.shoppi.databinding.FragmentShoppingListBinding;
 import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.ui.adapter.ShoppingListAdapter;
 import org.bitbrothers.shoppi.ui.adapter.WeakOnListChangedCallbackRecyclerViewAdapter;
@@ -32,7 +33,10 @@ public class ShoppingListFragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_shopping_list, container, false);
+        FragmentShoppingListBinding binding = FragmentShoppingListBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
+        binding.setVm(viewModel);
 
         shoppingListAdapter = new ShoppingListAdapter(new ShoppingListAdapter.Callback() {
             @Override

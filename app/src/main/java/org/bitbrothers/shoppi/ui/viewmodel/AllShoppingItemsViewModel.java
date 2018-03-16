@@ -28,6 +28,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
     public final ObservableField<String> addContainerName = new ObservableField<>("");
     public final ObservableInt addContainerCategoryPosition = new ObservableInt(-1);
     public final ObservableBoolean addContainerVisible = new ObservableBoolean(false);
+    public final ObservableBoolean showEmptyListMessage = new ObservableBoolean(false);
 
     private final Context context;
     private final ShoppingItemRepository shoppingItemRepository;
@@ -178,6 +179,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 .subscribe(shoppingItems -> {
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);
+                    this.showEmptyListMessage.set(shoppingItems.isEmpty());
                 }, error -> {
                     logError("all_shopping_items_retrieving", error);
                     withView(view -> view.showErrorToast(R.string.all_shopping_items_error_retrieving_shopping_items));
@@ -191,6 +193,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 break;
             }
         }
+        this.showEmptyListMessage.set(shoppingItems.isEmpty());
     }
 
     private void updateShoppingItemInList(ShoppingItem shoppingItem) {

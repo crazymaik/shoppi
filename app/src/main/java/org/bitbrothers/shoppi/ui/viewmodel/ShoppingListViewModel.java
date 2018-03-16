@@ -1,6 +1,7 @@
 package org.bitbrothers.shoppi.ui.viewmodel;
 
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.logging.Logger;
@@ -19,6 +20,8 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
     }
 
     public final ObservableArrayList<ShoppingItem> shoppingItems = new ObservableArrayList<>();
+
+    public final ObservableBoolean showEmptyListMessage = new ObservableBoolean(false);
 
     private final ShoppingItemRepository shoppingItemRepository;
     private final CategoryRepository categoryRepository;
@@ -112,6 +115,7 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 .subscribe(shoppingItems -> {
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);
+                    this.showEmptyListMessage.set(shoppingItems.isEmpty());
                 }, error -> {
                     logError("shopping_list_retrieving_items", error);
                     withView(view -> view.showErrorToast(R.string.shopping_list_error_retrieving_shopping_items));
@@ -125,5 +129,6 @@ public class ShoppingListViewModel extends BaseViewModel<ShoppingListViewModel.V
                 break;
             }
         }
+        this.showEmptyListMessage.set(shoppingItems.isEmpty());
     }
 }
