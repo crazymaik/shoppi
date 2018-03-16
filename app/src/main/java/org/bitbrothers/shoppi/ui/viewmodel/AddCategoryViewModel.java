@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.View> {
 
@@ -84,8 +82,7 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
         saveButtonEnabled.set(false);
 
         categoryRepository.get(categoryId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(category -> {
                     categoryName.set(category.getName());
                     int position = colorValues.indexOf(category.getColor());
@@ -117,8 +114,7 @@ public class AddCategoryViewModel extends BaseViewModel<AddCategoryViewModel.Vie
             operation = categoryRepository.create(new Category(categoryName.get(), getSelectedColorValue()));
         }
 
-        operation.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        operation.compose(applySingleSchedulers())
                 .subscribe(category -> {
                     close.set(true);
                 }, error -> {

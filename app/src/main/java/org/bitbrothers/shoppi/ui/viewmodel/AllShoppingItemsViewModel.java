@@ -13,9 +13,6 @@ import org.bitbrothers.shoppi.model.ShoppingItem;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 import org.bitbrothers.shoppi.store.ShoppingItemRepository;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsViewModel.View> {
 
     public interface View extends BaseViewModel.BaseView {
@@ -46,8 +43,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
         super.attach(view);
 
         addViewDisposable(shoppingItemRepository.getOnItemAddedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -55,8 +51,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemUpdatedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -64,8 +59,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemRemovedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(id -> {
                     removeShoppingItemFromList(id);
                 }, error -> {
@@ -73,8 +67,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 }));
 
         addViewDisposable(shoppingItemRepository.getOnItemBoughtStateChangedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     updateShoppingItemInList(shoppingItem);
                 }, error -> {
@@ -82,8 +75,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -91,8 +83,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveShoppingItems();
                 }, error -> {
@@ -105,8 +96,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
     public void openAddShoppingItemView() {
         addContainerButtonEnabled.set(false);
         categoryRepository.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(categories -> {
                     this.categories.clear();
                     this.categories.add(new Category(0l, context.getString(R.string.category_unassigned_name), 0xff000000));
@@ -127,8 +117,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
         addContainerButtonEnabled.set(false);
         addContainerName.set("");
         shoppingItemRepository.create(new ShoppingItem(name, category))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(shoppingItem -> {
                     addContainerButtonEnabled.set(true);
                     withView(view -> view.showShoppingItemAddedToast(shoppingItem.getName()));
@@ -141,8 +130,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
 
     public void deleteShoppingItem(long shoppingItemId) {
         shoppingItemRepository.delete(shoppingItemId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyCompletableSchedulers())
                 .subscribe(() -> {
                 }, error -> {
                     logError("all_shopping_items_delete", error);
@@ -152,8 +140,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
 
     public void markBought(ShoppingItem shoppingItem) {
         shoppingItemRepository.markBought(shoppingItem)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
                     logError("all_shopping_items_markbought", error);
@@ -163,8 +150,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
 
     public void unmarkBought(ShoppingItem shoppingItem) {
         shoppingItemRepository.unmarkBought(shoppingItem)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(updatedShoppingItem -> {
                 }, error -> {
                     logError("all_shopping_items_unmarkbought", error);
@@ -174,8 +160,7 @@ public class AllShoppingItemsViewModel extends BaseViewModel<AllShoppingItemsVie
 
     private void retrieveShoppingItems() {
         shoppingItemRepository.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(shoppingItems -> {
                     this.shoppingItems.clear();
                     this.shoppingItems.addAll(shoppingItems);

@@ -7,9 +7,6 @@ import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.model.Category;
 import org.bitbrothers.shoppi.store.CategoryRepository;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
 public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel.View> {
 
     public interface View extends BaseViewModel.BaseView {
@@ -31,8 +28,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
         super.attach(view);
 
         addViewDisposable(categoryRepository.getOnItemAddedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
@@ -40,8 +36,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 }));
 
         addViewDisposable(categoryRepository.getOnItemUpdatedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(shoppingItem -> {
                     retrieveCategories();
                 }, error -> {
@@ -49,8 +44,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
                 }));
 
         addViewDisposable(categoryRepository.getOnItemRemovedObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyObservableSchedulers())
                 .subscribe(id -> {
                     for (int i = 0; i < categories.size(); ++i) {
                         if (categories.get(i).getId() == id) {
@@ -67,8 +61,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
 
     private void retrieveCategories() {
         categoryRepository.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(categories -> {
                     this.categories.clear();
                     this.categories.addAll(categories);
@@ -80,8 +73,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
 
     public void safeDeleteCategory(long categoryId) {
         categoryRepository.getAssignedShoppingItemsCount(categoryId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySingleSchedulers())
                 .subscribe(itemCount -> {
                     if (itemCount == 0) {
                         deleteCategory(categoryId);
@@ -96,8 +88,7 @@ public class AllCategoriesViewModel extends BaseViewModel<AllCategoriesViewModel
 
     public void deleteCategory(long categoryId) {
         categoryRepository.delete(categoryId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applyCompletableSchedulers())
                 .subscribe(() -> {
                 }, error -> {
                     logError("all_categories_deleting", error);
