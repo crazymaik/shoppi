@@ -1,15 +1,15 @@
 package org.bitbrothers.shoppi.ui.adapter;
 
-import android.graphics.drawable.ColorDrawable;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.ui.widget.CheckedColorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameField;
-        private final ImageView colorField;
+        private final CheckedColorView colorField;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -47,7 +47,7 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     private final Callback callback;
     private List<ShoppingItem> shoppingItems;
 
-    public AllShoppingItemsAdapter(Callback callback) {
+    public AllShoppingItemsAdapter(Context context, Callback callback) {
         this.callback = callback;
         shoppingItems = new ArrayList<>();
     }
@@ -61,18 +61,11 @@ public class AllShoppingItemsAdapter extends RecyclerView.Adapter<AllShoppingIte
     public void onBindViewHolder(ViewHolder holder, int position) {
         ShoppingItem shoppingItem = shoppingItems.get(position);
         int color = shoppingItem.getColor() != null ? shoppingItem.getColor() : 0xff000000;
-        int textAppearance;
-
-        if (shoppingItem.isBought()) {
-            textAppearance = R.style.BoughtShoppingItemTextAppearance;
-            color = (color & 0x00ffffff) | 0x88000000;
-        } else {
-            textAppearance = R.style.TextAppearance_AppCompat_Medium;
-        }
 
         holder.nameField.setText(shoppingItem.getName());
-        holder.nameField.setTextAppearance(textAppearance);
-        holder.colorField.setImageDrawable(new ColorDrawable(color));
+        holder.nameField.setTextAppearance(shoppingItem.isBought() ? R.style.BoughtShoppingItemTextAppearance : R.style.TextAppearance_AppCompat_Medium);
+        holder.colorField.setColor(color);
+        holder.colorField.setFilled(!shoppingItem.isBought());
     }
 
     @Override

@@ -1,15 +1,14 @@
 package org.bitbrothers.shoppi.ui.adapter;
 
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.model.Category;
+import org.bitbrothers.shoppi.ui.widget.CheckedColorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +22,14 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView colorField;
         private final TextView nameField;
+        private final CheckedColorView colorField;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.colorField = itemView.findViewById(R.id.category_item_color);
             this.nameField = itemView.findViewById(R.id.category_item_name);
+            this.colorField = itemView.findViewById(R.id.category_item_color);
+            this.colorField.setFilled(true);
 
             itemView.setOnLongClickListener(v -> {
                 callback.onCategoryLongClicked(categories.get(getAdapterPosition()));
@@ -54,8 +54,8 @@ public class AllCategoriesAdapter extends RecyclerView.Adapter<AllCategoriesAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Category category = categories.get(position);
-        holder.colorField.setImageDrawable(new ColorDrawable(category.getColor()));
         holder.nameField.setText(category.getName());
+        holder.colorField.setColor(category.getColor());
     }
 
     @Override

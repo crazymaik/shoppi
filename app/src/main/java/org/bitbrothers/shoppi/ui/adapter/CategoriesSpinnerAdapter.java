@@ -1,15 +1,14 @@
 package org.bitbrothers.shoppi.ui.adapter;
 
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.model.Category;
+import org.bitbrothers.shoppi.ui.widget.CheckedColorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +17,13 @@ public class CategoriesSpinnerAdapter extends BaseAdapter {
 
     public static class ViewHolder {
 
-        private final ImageView colorField;
         private final TextView nameField;
+        private final CheckedColorView colorField;
 
         public ViewHolder(View itemView) {
-            this.colorField = itemView.findViewById(R.id.category_item_color);
             this.nameField = itemView.findViewById(R.id.category_item_name);
+            this.colorField = itemView.findViewById(R.id.category_item_color);
+            this.colorField.setFilled(true);
         }
     }
 
@@ -60,8 +60,8 @@ public class CategoriesSpinnerAdapter extends BaseAdapter {
         }
 
         Category category = categories.get(position);
-        vh.colorField.setImageDrawable(new ColorDrawable(category.getColor()));
         vh.nameField.setText(category.getName());
+        vh.colorField.setColor(category.getColor());
 
         return convertView;
     }

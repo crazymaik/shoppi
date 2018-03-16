@@ -38,7 +38,7 @@ public class ShoppingListFragment
 
         binding.setVm(viewModel);
 
-        shoppingListAdapter = new ShoppingListAdapter(new ShoppingListAdapter.Callback() {
+        shoppingListAdapter = new ShoppingListAdapter(getActivity(), new ShoppingListAdapter.Callback() {
             @Override
             public void markBought(ShoppingItem shoppingItem) {
                 viewModel.markBought(shoppingItem);

@@ -1,15 +1,16 @@
 package org.bitbrothers.shoppi.ui.adapter;
 
-import android.graphics.drawable.ColorDrawable;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.model.ShoppingItem;
+import org.bitbrothers.shoppi.ui.view.Dimensions;
+import org.bitbrothers.shoppi.ui.widget.CheckedColorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameField;
-        private final ImageView colorField;
+        private final CheckedColorView colorField;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.nameField = itemView.findViewById(R.id.shopping_item_name);
             this.colorField = itemView.findViewById(R.id.shopping_item_color);
+            this.colorField.setFilled(true);
 
             itemView.setOnLongClickListener(v -> {
                 callback.markBought(shoppingItems.get(getAdapterPosition()));
@@ -40,10 +42,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     private final Callback callback;
     private List<ShoppingItem> shoppingItems;
+    private final int strokeWidth;
 
-    public ShoppingListAdapter(Callback callback) {
+    public ShoppingListAdapter(Context context, Callback callback) {
         this.callback = callback;
-        shoppingItems = new ArrayList<>();
+        this.shoppingItems = new ArrayList<>();
+        this.strokeWidth = Dimensions.dpToPixels(context, 2);
     }
 
     @Override
@@ -54,12 +58,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ShoppingItem shoppingItem = shoppingItems.get(position);
-        if (shoppingItem.getColor() != null) {
-            holder.colorField.setImageDrawable(new ColorDrawable(shoppingItem.getColor()));
-        } else {
-            holder.colorField.setImageDrawable(new ColorDrawable(0xff000000));
-        }
+        int color = shoppingItem.getColor() != null ? shoppingItem.getColor() : 0xff000000;
+
         holder.nameField.setText(shoppingItem.getName());
+        holder.colorField.setColor(color);
     }
 
     @Override

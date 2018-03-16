@@ -87,7 +87,7 @@ public class AllShoppingItemsFragment
 
         View rootView = binding.getRoot();
 
-        AllShoppingItemsAdapter shoppingItemsAdapter = new AllShoppingItemsAdapter(new AllShoppingItemsAdapter.Callback() {
+        AllShoppingItemsAdapter shoppingItemsAdapter = new AllShoppingItemsAdapter(getActivity(), new AllShoppingItemsAdapter.Callback() {
             @Override
             public void onLongClick(ShoppingItem shoppingItem) {
                 showShoppingItemOptionsDialog(shoppingItem);
