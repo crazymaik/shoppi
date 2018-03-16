@@ -20,9 +20,11 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
+            buildConfigField "boolean", "FEATURE_ANALYTICS", "false"
             buildConfigField "boolean", "FEATURE_PREFILL_CATEGORIES", "false"
         }
         release {
+            buildConfigField "boolean", "FEATURE_ANALYTICS", "true"
             buildConfigField "boolean", "FEATURE_PREFILL_CATEGORIES", "true"
 
             minifyEnabled true

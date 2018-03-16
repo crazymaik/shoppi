@@ -13,7 +13,7 @@ public class ProdLogger implements Logger {
 
     public ProdLogger(Context context) {
         analytics = FirebaseAnalytics.getInstance(context);
-        analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
+        analytics.setAnalyticsCollectionEnabled(BuildConfig.FEATURE_ANALYTICS);
     }
 
     @Override
