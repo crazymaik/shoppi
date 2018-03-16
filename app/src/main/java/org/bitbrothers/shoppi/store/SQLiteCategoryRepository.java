@@ -70,7 +70,7 @@ public class SQLiteCategoryRepository implements CategoryRepository {
             int deleteCount = db.delete("categories", "id = ?", new String[]{"" + id});
 
             if (deleteCount != 1) {
-                emitter.onError(new RuntimeException());
+                throw new RuntimeException();
             }
 
             emitter.onComplete();
@@ -83,7 +83,7 @@ public class SQLiteCategoryRepository implements CategoryRepository {
             SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
             try (Cursor cursor = db.query("categories", new String[]{"id", "name", "color"}, "id = ?", new String[]{"" + id}, null, null, null)) {
                 if (!cursor.moveToNext()) {
-                    emitter.onError(new RuntimeException());
+                    throw new RuntimeException();
                 }
 
                 emitter.onSuccess(new Category(cursor.getLong(cursor.getColumnIndex("id")),
@@ -111,7 +111,7 @@ public class SQLiteCategoryRepository implements CategoryRepository {
             try (Cursor cursor = db.query("shopping_items", new String[]{"count(*)"}, "category_id = ?", new String[]{"" + categoryId}, null, null, null)) {
 
                 if (!cursor.moveToNext()) {
-                    emitter.onError(new RuntimeException());
+                    throw new RuntimeException();
                 }
 
                 emitter.onSuccess(cursor.getInt(0));

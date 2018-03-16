@@ -74,7 +74,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             int deleteCount = db.delete("shopping_items", "id = ?", new String[]{"" + id});
 
             if (deleteCount != 1) {
-                emitter.onError(new RuntimeException());
+                throw new RuntimeException();
             }
 
             emitter.onComplete();
@@ -87,8 +87,8 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             SQLiteDatabase db = sqliteOpenHelper.getReadableDatabase();
 
             try (Cursor cursor = db.rawQuery("select s.id, s.name, s.bought, s.category_id, c.color from shopping_items s left outer join categories c on s.category_id = c.id where s.id = ?", new String[]{"" + id})) {
-                if (!cursor.moveToNext()) {
-                    emitter.onError(new RuntimeException());
+                if (!cursor.moveToFirst()) {
+                    throw new RuntimeException();
                 }
 
                 int columnColor = cursor.getColumnIndex("color");
@@ -134,7 +134,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
 
             if (updateCount != 1) {
-                emitter.onError(new RuntimeException());
+                throw new RuntimeException();
             }
 
             emitter.onSuccess(shoppingItem.getId());
@@ -151,7 +151,7 @@ public class SQLiteShoppingItemRepository implements ShoppingItemRepository {
             int updateCount = db.update("shopping_items", values, "id = ?", new String[]{"" + shoppingItem.getId()});
 
             if (updateCount != 1) {
-                emitter.onError(new RuntimeException());
+                throw new RuntimeException();
             }
 
             emitter.onSuccess(shoppingItem.getId());
