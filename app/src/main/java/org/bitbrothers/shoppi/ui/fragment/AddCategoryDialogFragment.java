@@ -15,6 +15,7 @@ import android.widget.Button;
 import org.bitbrothers.shoppi.R;
 import org.bitbrothers.shoppi.ShoppiApplication;
 import org.bitbrothers.shoppi.databinding.FragmentAddCategoryBinding;
+import org.bitbrothers.shoppi.model.Colors;
 import org.bitbrothers.shoppi.ui.adapter.CategoryColorsAdapter;
 import org.bitbrothers.shoppi.ui.viewmodel.AddCategoryViewModel;
 
@@ -91,7 +92,7 @@ public class AddCategoryDialogFragment
         builder.setView(rootView);
 
         categoryColorsAdapter = new CategoryColorsAdapter(position -> viewModel.selectedColorPosition.set(position));
-        categoryColorsAdapter.setColors(viewModel.colorValues);
+        categoryColorsAdapter.setColors(Colors.RGB_COLOR_VALUES);
         categoryColorsAdapter.setSelectedColorPosition(viewModel.selectedColorPosition.get());
 
         colorsView = rootView.findViewById(R.id.add_category_colors);

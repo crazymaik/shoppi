@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.bitbrothers.shoppi.BuildConfig;
+import org.bitbrothers.shoppi.model.Categories;
+import org.bitbrothers.shoppi.model.Colors;
 
 public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper {
 
@@ -22,7 +24,9 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper {
         db.execSQL("create table shopping_items (id integer primary key, name text not null, bought integer not null, category_id integer references categories(id) on delete set null);");
 
         if (BuildConfig.FEATURE_PREFILL_CATEGORIES) {
-            db.execSQL("insert into categories (name, color) values ('Beverages', 0xff1616e5), ('Bread & Bakery', 0xffe57e16), ('Candy', 0xffe516e5), ('Canned Goods', 0xff8ecc51), ('Cleaning & Home', 0xff7e16e5), ('Dairy', 0xffe5e516), ('Frozen Foods', 0xff5151cc), ('Fruits & Vegetables', 0xff16e516), ('Meat & Seafood', 0xffe51616), ('Personal Care', 0xff16e5e5);");
+            for (int i = 0; i < Categories.DEFAULT_CATEGORIES.length; ++i) {
+                db.execSQL("insert into categories (name, color) values (?, ?)", new Object[]{Categories.DEFAULT_CATEGORIES[i], Colors.RGB_COLOR_VALUES.get(1 + i * 2)});
+            }
         }
     }
 
