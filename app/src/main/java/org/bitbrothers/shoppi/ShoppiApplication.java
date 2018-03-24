@@ -3,6 +3,8 @@ package org.bitbrothers.shoppi;
 import android.app.Application;
 import android.content.Context;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.logging.ProdLogger;
 import org.bitbrothers.shoppi.store.CategoryRepository;
@@ -27,7 +29,10 @@ public class ShoppiApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        logger = new ProdLogger(this);
+        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(this);
+        analytics.setAnalyticsCollectionEnabled(BuildConfig.FEATURE_ANALYTICS);
+
+        logger = new ProdLogger(analytics);
 
         SQLiteOpenHelper sqliteOpenHelper = new SQLiteOpenHelper(this, "main");
         shoppingItemRepository = new SQLiteShoppingItemRepository(sqliteOpenHelper);

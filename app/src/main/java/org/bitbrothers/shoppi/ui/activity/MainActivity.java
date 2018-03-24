@@ -14,10 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.bitbrothers.shoppi.BuildConfig;
 import org.bitbrothers.shoppi.R;
+import org.bitbrothers.shoppi.ShoppiApplication;
+import org.bitbrothers.shoppi.logging.Logger;
 import org.bitbrothers.shoppi.ui.fragment.AllCategoriesFragment;
 import org.bitbrothers.shoppi.ui.fragment.AllShoppingItemsFragment;
 import org.bitbrothers.shoppi.ui.fragment.ShoppingListFragment;
@@ -109,13 +109,13 @@ public class MainActivity extends AppCompatActivity {
     private static class PagerAdapter extends FragmentStatePagerAdapter {
 
         private final Context context;
-        private final FirebaseAnalytics firebaseAnalytics;
+        private final Logger logger;
         private int previousPrimaryPosition = -1;
 
         public PagerAdapter(Context context, FragmentManager fm) {
             super(fm);
             this.context = context;
-            firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+            logger = ShoppiApplication.from(context).getLogger();
         }
 
         @Override
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("name", positionToAnalyticsName(position));
                 bundle.putString("previous", positionToAnalyticsName(previousPrimaryPosition));
-                firebaseAnalytics.logEvent("page_view", bundle);
+                logger.logEvent("page_view", bundle);
                 previousPrimaryPosition = position;
             }
         }
